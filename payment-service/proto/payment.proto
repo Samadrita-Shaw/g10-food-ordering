@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package payment;
+
+service PaymentService {
+  rpc ProcessPayment(PaymentRequest) returns (PaymentResponse);
+  rpc RefundPayment(RefundRequest) returns (RefundResponse);
+  rpc GetPaymentStatus(PaymentStatusRequest) returns (PaymentStatusResponse);
+}
+
+message PaymentRequest {
+  string order_id = 1;
+  string user_id = 2;
+  double amount = 3;
+  string currency = 4;
+  string payment_method = 5;
+  PaymentDetails payment_details = 6;
+}
+
+message PaymentDetails {
+  string card_number = 1;
+  string card_holder_name = 2;
+  string expiry_month = 3;
+  string expiry_year = 4;
+  string cvv = 5;
+  BillingAddress billing_address = 6;
+}
+
+message BillingAddress {
+  string street = 1;
+  string city = 2;
+  string state = 3;
+  string zip_code = 4;
+  string country = 5;
+}
+
+message PaymentResponse {
+  string payment_id = 1;
+  string transaction_id = 2;
+  PaymentStatus status = 3;
+  string message = 4;
+  double amount = 5;
+  string currency = 6;
+  int64 timestamp = 7;
+}
+
+message RefundRequest {
+  string payment_id = 1;
+  string order_id = 2;
+  double amount = 3;
+  string reason = 4;
+}
+
+message RefundResponse {
+  string refund_id = 1;
+  PaymentStatus status = 2;
+  string message = 3;
+  double refunded_amount = 4;
+  int64 timestamp = 5;
+}
+
+message PaymentStatusRequest {
+  string payment_id = 1;
+  string order_id = 2;
+}
+
+message PaymentStatusResponse {
+  string payment_id = 1;
+  string order_id = 2;
+  PaymentStatus status = 3;
+  double amount = 4;
+  string currency = 5;
+  int64 created_at = 6;
+  int64 updated_at = 7;
+}
+
+enum PaymentStatus {
+  PENDING = 0;
+  PROCESSING = 1;
+  COMPLETED = 2;
+  FAILED = 3;
+  CANCELLED = 4;
+  REFUNDED = 5;
+  PARTIALLY_REFUNDED = 6;
+}

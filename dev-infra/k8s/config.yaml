@@ -1,0 +1,45 @@
+# Application Secrets
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: food-ordering
+type: Opaque
+data:
+  # Base64 encoded values
+  # jwt-secret: "your_jwt_secret_key_base64_encoded"
+  jwt-secret: eW91cl9qd3Rfc2VjcmV0X2tleQ==
+  # mongodb-password: "password_base64_encoded"  
+  mongodb-password: cGFzc3dvcmQ=
+  # postgres-password: "password_base64_encoded"
+  postgres-password: cGFzc3dvcmQ=
+  # rabbitmq-password: "password_base64_encoded"
+  rabbitmq-password: cGFzc3dvcmQ=
+---
+# ConfigMap for application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: food-ordering
+data:
+  # Database configurations
+  mongodb-host: "mongodb-service"
+  mongodb-port: "27017"
+  mongodb-database: "food_ordering"
+  postgres-host: "postgres-service"
+  postgres-port: "5432"
+  postgres-database: "food_ordering"
+  
+  # Message broker configuration
+  rabbitmq-host: "rabbitmq-service"
+  rabbitmq-port: "5672"
+  
+  # Cache configuration
+  redis-host: "redis-service"
+  redis-port: "6379"
+  
+  # Application settings
+  jwt-expiry: "24h"
+  api-rate-limit: "100"
+  log-level: "info"

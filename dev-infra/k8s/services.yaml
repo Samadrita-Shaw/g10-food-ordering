@@ -1,0 +1,285 @@
+# Gateway Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  namespace: food-ordering
+  labels:
+    app: gateway-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gateway-service
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+    spec:
+      containers:
+      - name: gateway
+        image: food-ordering/gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: USER_SERVICE_URL
+          value: http://user-service:3001
+        - name: CATALOG_SERVICE_URL
+          value: http://catalog-service:3002
+        - name: ORDER_SERVICE_URL
+          value: http://order-service:3003
+        - name: PAYMENT_SERVICE_URL
+          value: http://payment-service:3004
+        - name: DELIVERY_SERVICE_URL
+          value: http://delivery-service:3005
+        - name: REDIS_URL
+          value: redis://redis-service:6379
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# Gateway Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  namespace: food-ordering
+spec:
+  selector:
+    app: gateway-service
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+  type: LoadBalancer
+---
+# User Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: food-ordering
+  labels:
+    app: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: food-ordering/user-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3001
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: MONGODB_URL
+          value: mongodb://admin:password@mongodb-service:27017/user_service?authSource=admin
+        - name: RABBITMQ_URL
+          value: amqp://admin:password@rabbitmq-service:5672
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: jwt-secret
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# User Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: food-ordering
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 3001
+      targetPort: 3001
+  type: ClusterIP
+---
+# Order Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: food-ordering
+  labels:
+    app: order-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+      - name: order-service
+        image: food-ordering/order-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3003
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: POSTGRES_URL
+          value: postgresql://admin:password@postgres-service:5432/food_ordering
+        - name: RABBITMQ_URL
+          value: amqp://admin:password@rabbitmq-service:5672
+        - name: PAYMENT_SERVICE_GRPC_URL
+          value: payment-service:50051
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# Order Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: food-ordering
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 3003
+      targetPort: 3003
+  type: ClusterIP
+---
+# Payment Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: food-ordering
+  labels:
+    app: payment-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+      - name: payment-service
+        image: food-ordering/payment-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3004
+        - containerPort: 50051
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: POSTGRES_URL
+          value: postgresql://admin:password@postgres-service:5432/food_ordering
+        - name: RABBITMQ_URL
+          value: amqp://admin:password@rabbitmq-service:5672
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+# Payment Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: food-ordering
+spec:
+  selector:
+    app: payment-service
+  ports:
+    - name: http
+      port: 3004
+      targetPort: 3004
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+  type: ClusterIP
