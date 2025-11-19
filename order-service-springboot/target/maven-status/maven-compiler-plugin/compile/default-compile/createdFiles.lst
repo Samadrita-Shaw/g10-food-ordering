@@ -1,0 +1,9 @@
+com/foodordering/order/OrderServiceApplication.class
+com/foodordering/order/controller/OrderController.class
+com/foodordering/order/entity/Order.class
+com/foodordering/order/entity/OrderEvent.class
+com/foodordering/order/repository/OrderRepository.class
+com/foodordering/order/entity/Order$DeliveryAddress.class
+com/foodordering/order/entity/Order$OrderEventType.class
+com/foodordering/order/entity/OrderItem.class
+com/foodordering/order/entity/Order$OrderStatus.class

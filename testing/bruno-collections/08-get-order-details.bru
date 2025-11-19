@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{orderServiceUrl}}/api/orders/{{orderId}}
+  url: {{orderServiceUrl}}/api/orders/{{testOrderId}}
 }
 
 headers {
@@ -18,11 +18,14 @@ tests {
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('id');
     expect(res.body).to.have.property('status');
+    expect(res.body.id).to.equal(bru.getEnvVar("testOrderId"));
   });
   
   test("Order data is complete", function() {
     expect(res.body).to.have.property('items');
-    expect(res.body).to.have.property('delivery_address');
-    expect(res.body).to.have.property('total_amount');
+    expect(res.body).to.have.property('customerAddress');
+    expect(res.body).to.have.property('totalAmount');
+    expect(res.body).to.have.property('createdAt');
+    expect(res.body).to.have.property('updatedAt');
   });
 }

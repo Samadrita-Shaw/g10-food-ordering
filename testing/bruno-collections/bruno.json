@@ -1,30 +1,32 @@
 {
   "version": "1",
-  "name": "G10 Food Ordering API Tests",
+  "name": "G10 Food Ordering API Tests (Spring Boot)",
   "type": "collection",
   "environments": {
     "local": {
-      "name": "Local Development",
+      "name": "Local Development (Spring Boot)",
       "variables": {
-        "baseUrl": "http://localhost:3000",
-        "gatewayUrl": "http://localhost:3000",
-        "userServiceUrl": "http://localhost:3001",
-        "catalogServiceUrl": "http://localhost:3002",
-        "orderServiceUrl": "http://localhost:3003",
-        "paymentServiceUrl": "http://localhost:3004",
-        "deliveryServiceUrl": "http://localhost:3005"
+        "baseUrl": "http://localhost:8080",
+        "gatewayUrl": "http://localhost:8080",
+        "userServiceUrl": "http://localhost:8081",
+        "catalogServiceUrl": "http://localhost:8082",
+        "orderServiceUrl": "http://localhost:8083",
+        "paymentServiceUrl": "http://localhost:8084",
+        "deliveryServiceUrl": "http://localhost:8085",
+        "authToken": ""
       }
     },
     "kubernetes": {
-      "name": "Kubernetes (Minikube)",
+      "name": "Kubernetes (Spring Boot)",
       "variables": {
-        "baseUrl": "http://localhost:80",
-        "gatewayUrl": "http://localhost:80",
-        "userServiceUrl": "http://localhost:3001",
-        "catalogServiceUrl": "http://localhost:3002",
-        "orderServiceUrl": "http://localhost:3003",
-        "paymentServiceUrl": "http://localhost:3004",
-        "deliveryServiceUrl": "http://localhost:3005"
+        "baseUrl": "http://localhost:8080",
+        "gatewayUrl": "http://localhost:8080",
+        "userServiceUrl": "http://localhost:8081",
+        "catalogServiceUrl": "http://localhost:8082",
+        "orderServiceUrl": "http://localhost:8083",
+        "paymentServiceUrl": "http://localhost:8084",
+        "deliveryServiceUrl": "http://localhost:8085",
+        "authToken": ""
       }
     }
   }

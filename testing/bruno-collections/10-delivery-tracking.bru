@@ -1,0 +1,85 @@
+meta {
+  name: 10. Create Delivery
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{deliveryServiceUrl}}/api/deliveries
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "orderId": "{{testOrderId}}",
+    "restaurantAddress": {
+      "street": "123 Pizza Street",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "country": "USA"
+    },
+    "customerAddress": {
+      "street": "123 Test Street",
+      "city": "Test City",
+      "state": "TS",
+      "zipCode": "12345",
+      "country": "USA"
+    },
+    "estimatedDeliveryTime": "2024-01-15T19:30:00Z",
+    "specialInstructions": "Ring the doorbell twice"
+  }
+}
+
+tests {
+  test("Delivery created successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('ASSIGNED');
+    
+    // Store delivery ID for subsequent tests
+    bru.setEnvVar("deliveryId", res.body.id);
+  });
+  
+  test("Delivery data is correct", function() {
+    expect(res.body.orderId).to.equal(bru.getEnvVar("testOrderId"));
+    expect(res.body).to.have.property('estimatedDeliveryTime');
+  });
+}
+
+---
+
+meta {
+  name: 10.1 Get Delivery Status
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{deliveryServiceUrl}}/api/deliveries/{{deliveryId}}/tracking
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Delivery tracking retrieved", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('status');
+    expect(res.body).to.have.property('currentLocation');
+  });
+  
+  test("Tracking data is complete", function() {
+    expect(res.body).to.have.property('estimatedDeliveryTime');
+    expect(res.body).to.have.property('driverId');
+  });
+}

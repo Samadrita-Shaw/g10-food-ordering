@@ -1,0 +1,145 @@
+meta {
+  name: 1. All Services Health Check (Spring Boot Actuator)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{gatewayUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Gateway is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+  
+  test("Response time is acceptable", function() {
+    expect(res.responseTime).to.be.below(2000);
+  });
+}
+
+---
+
+meta {
+  name: 1.1 User Service Health Check
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{userServiceUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("User Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+}
+
+---
+
+meta {
+  name: 1.2 Catalog Service Health Check
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{catalogServiceUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Catalog Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+}
+
+---
+
+meta {
+  name: 1.3 Order Service Health Check
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{orderServiceUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Order Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+}
+
+---
+
+meta {
+  name: 1.4 Payment Service Health Check
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{paymentServiceUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Payment Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+}
+
+---
+
+meta {
+  name: 1.5 Delivery Service Health Check
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{deliveryServiceUrl}}/actuator/health
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Delivery Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+  });
+}

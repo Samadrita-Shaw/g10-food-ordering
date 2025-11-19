@@ -49,118 +49,91 @@ services:
     networks:
       - food-ordering-network
 
-  # Microservices
+    # Spring Boot Microservices
   gateway:
     build:
-      context: ../gateway
+      context: ../gateway-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-gateway
+    container_name: food-ordering-gateway-springboot
     ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - USER_SERVICE_URL=http://user-service:3001
-      - CATALOG_SERVICE_URL=http://catalog-service:3002
-      - ORDER_SERVICE_URL=http://order-service:3003
-      - PAYMENT_SERVICE_URL=http://payment-service:3004
-      - DELIVERY_SERVICE_URL=http://delivery-service:3005
-      - REDIS_URL=redis://redis:6379
+      - "8080:8080"
     depends_on:
       - redis
-      - user-service
-      - catalog-service
-      - order-service
-      - payment-service
-      - delivery-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 
   user-service:
     build:
-      context: ../user-service
+      context: ../user-service-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-user-service
+    container_name: food-ordering-user-service-springboot
     ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=development
-      - MONGODB_URL=mongodb://admin:password@mongodb:27017/user_service?authSource=admin
-      - JWT_SECRET=your_jwt_secret_key
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      - "8081:8080"
     depends_on:
       - mongodb
-      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 
   catalog-service:
     build:
-      context: ../catalog-service
+      context: ../catalog-service-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-catalog-service
+    container_name: food-ordering-catalog-service-springboot
     ports:
-      - "3002:3002"
-    environment:
-      - NODE_ENV=development
-      - MONGODB_URL=mongodb://admin:password@mongodb:27017/catalog_service?authSource=admin
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      - "8082:8080"
     depends_on:
       - mongodb
-      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 
   order-service:
     build:
-      context: ../order-service
+      context: ../order-service-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-order-service
+    container_name: food-ordering-order-service-springboot
     ports:
-      - "3003:3003"
-    environment:
-      - NODE_ENV=development
-      - POSTGRES_URL=postgresql://admin:password@postgres:5432/food_ordering
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
-      - PAYMENT_SERVICE_GRPC_URL=payment-service:50051
+      - "8083:8080"
     depends_on:
       - postgres
       - rabbitmq
-      - payment-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 
   payment-service:
     build:
-      context: ../payment-service
+      context: ../payment-service-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-payment-service
+    container_name: food-ordering-payment-service-springboot
     ports:
-      - "3004:3004"
-      - "50051:50051"  # gRPC port
-    environment:
-      - NODE_ENV=development
-      - POSTGRES_URL=postgresql://admin:password@postgres:5432/food_ordering
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      - "8084:8080"
+      - "50051:50051"
     depends_on:
       - postgres
-      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 
   delivery-service:
     build:
-      context: ../delivery-service
+      context: ../delivery-service-springboot
       dockerfile: Dockerfile
-    container_name: food-ordering-delivery-service
+    container_name: food-ordering-delivery-service-springboot
     ports:
-      - "3005:3005"
-    environment:
-      - PYTHON_ENV=development
-      - MONGODB_URL=mongodb://admin:password@mongodb:27017/delivery_service?authSource=admin
-      - RABBITMQ_URL=amqp://admin:password@rabbitmq:5672
+      - "8085:8080"
     depends_on:
       - mongodb
       - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     networks:
       - food-ordering-network
 

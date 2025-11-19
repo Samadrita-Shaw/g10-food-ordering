@@ -1,15 +1,15 @@
-# 🧪 Testing Guide for G10 Food Ordering Application
+# 🧪 Testing Guide for G10 Food Ordering Application (Spring Boot)
 
 ## 📋 Overview
 
-This guide provides comprehensive testing procedures for the G10 Food Ordering microservices application. All testing tools and scripts are ready to use.
+This guide provides comprehensive testing procedures for the G10 Food Ordering **Spring Boot microservices** application. All testing tools and API collections are updated for the Spring Boot architecture.
 
 ## 🛠️ Testing Tools Setup
 
 ### Prerequisites
-- **Docker Desktop** - For running infrastructure services
-- **Node.js 18+** - For running application services
-- **Python 3.9+** - For Delivery service
+- **Docker Desktop** - For running infrastructure services (MongoDB, PostgreSQL, RabbitMQ, Redis)
+- **Java 17+** - JDK for Spring Boot services
+- **Maven 3.8+** - Build tool for Spring Boot applications
 - **Bruno** - API testing client (recommended)
 - **curl** - Command-line HTTP testing
 
@@ -23,31 +23,50 @@ npm install -g @usebruno/cli
 
 # Verify tools
 docker --version
-node --version
-python3 --version
+java --version
+mvn --version
 curl --version
 ```
 
-## 🚀 Quick Start Testing
+## 🚀 Quick Start Testing (Spring Boot)
 
-### Step 1: Setup and Start Services
+### Step 1: Setup and Start Spring Boot Services
 ```bash
-# Run the automated setup script
-./testing/scripts/setup-and-start.sh
+# Navigate to project root
+cd /path/to/g10-food-ordering
+
+# Start all Spring Boot services with Docker
+./start-springboot-services.sh
 
 # This script will:
-# - Check prerequisites (Docker, ports)
 # - Start infrastructure services (MongoDB, PostgreSQL, RabbitMQ, Redis)
-# - Provide options for starting application services
+# - Build and deploy all 6 Spring Boot microservices
+# - Verify all services are healthy
 ```
 
-### Step 2: Health Check
+### Step 2: Validate Spring Boot Setup
 ```bash
-# Verify all services are running
+# Run validation script
+./validate-springboot-setup.sh
+
+# Expected output:
+# ✅ All 6 Spring Boot services properly structured
+# ✅ Maven pom.xml files configured
+# ✅ Spring Boot Application classes present
+```
+
+### Step 3: Health Check All Services
+```bash
+# Verify all Spring Boot services are running
 ./testing/scripts/health-check.sh
 
 # Expected output:
-# ✅ MongoDB (27017): RUNNING
+# ✅ Gateway Service (8080): UP
+# ✅ User Service (8081): UP
+# ✅ Catalog Service (8082): UP
+# ✅ Order Service (8083): UP
+# ✅ Payment Service (8084): UP
+# ✅ Delivery Service (8085): UP
 # ✅ PostgreSQL (5432): RUNNING
 # ✅ RabbitMQ Management (15672): RUNNING
 # ✅ Redis (6379): RUNNING

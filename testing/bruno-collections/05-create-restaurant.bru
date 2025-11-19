@@ -1,0 +1,55 @@
+meta {
+  name: 5.1 Create Restaurant (Admin)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{catalogServiceUrl}}/api/restaurants
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Test Pizza Palace",
+    "description": "Authentic Italian pizzas and pasta",
+    "cuisineType": "Italian",
+    "address": {
+      "street": "123 Pizza Street",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001",
+      "country": "USA"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [-74.006, 40.7128]
+    },
+    "phone": "+1-555-PIZZA",
+    "email": "info@testpizzapalace.com",
+    "rating": 4.5,
+    "isActive": true
+  }
+}
+
+tests {
+  test("Restaurant created successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('id');
+    expect(res.body.name).to.equal('Test Pizza Palace');
+    
+    // Store restaurant ID for subsequent tests
+    bru.setEnvVar("testRestaurantId", res.body.id);
+  });
+  
+  test("Restaurant data is correct", function() {
+    expect(res.body.cuisineType).to.equal('Italian');
+    expect(res.body.address.city).to.equal('New York');
+    expect(res.body.rating).to.equal(4.5);
+  });
+}

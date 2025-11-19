@@ -1,0 +1,16 @@
+# application-docker.yml
+spring:
+  data:
+    mongodb:
+      host: mongodb
+      port: 27017
+      database: food_ordering_delivery
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+      
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG

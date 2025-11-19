@@ -1,0 +1,108 @@
+meta {
+  name: 12. Error Handling - Invalid User Registration
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{userServiceUrl}}/api/auth/register
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "invalid-email",
+    "password": "123",
+    "firstName": "",
+    "lastName": ""
+  }
+}
+
+tests {
+  test("Validation errors handled correctly", function() {
+    expect(res.status).to.equal(400);
+    expect(res.body).to.have.property('message');
+  });
+}
+
+---
+
+meta {
+  name: 12.1 Error Handling - Unauthorized Access
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{userServiceUrl}}/api/users/profile
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Unauthorized access blocked", function() {
+    expect(res.status).to.equal(401);
+  });
+}
+
+---
+
+meta {
+  name: 12.2 Error Handling - Order with Invalid Data
+  type: http
+  seq: 18
+}
+
+post {
+  url: {{orderServiceUrl}}/api/orders
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "restaurantId": "",
+    "items": [],
+    "customerAddress": {}
+  }
+}
+
+tests {
+  test("Invalid order data rejected", function() {
+    expect(res.status).to.equal(400);
+    expect(res.body).to.have.property('message');
+  });
+}
+
+---
+
+meta {
+  name: 12.3 Error Handling - Non-existent Resource
+  type: http
+  seq: 19
+}
+
+get {
+  url: {{orderServiceUrl}}/api/orders/non-existent-id
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Non-existent resource returns 404", function() {
+    expect(res.status).to.equal(404);
+  });
+}

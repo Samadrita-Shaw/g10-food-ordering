@@ -1,0 +1,92 @@
+meta {
+  name: 11. Gateway - Route to User Service
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{gatewayUrl}}/user-service/api/users/profile
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Gateway routes to User Service correctly", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('email');
+    expect(res.body.email).to.equal('testuser@example.com');
+  });
+}
+
+---
+
+meta {
+  name: 11.1 Gateway - Route to Catalog Service
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{gatewayUrl}}/catalog-service/api/restaurants
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Gateway routes to Catalog Service correctly", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an('array');
+  });
+}
+
+---
+
+meta {
+  name: 11.2 Gateway - Route to Order Service
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{gatewayUrl}}/order-service/api/orders/{{testOrderId}}
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Gateway routes to Order Service correctly", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('id');
+    expect(res.body.id).to.equal(bru.getEnvVar("testOrderId"));
+  });
+}
+
+---
+
+meta {
+  name: 11.3 Gateway - Circuit Breaker Test
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{gatewayUrl}}/non-existent-service/api/test
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Gateway handles non-existent service gracefully", function() {
+    expect(res.status).to.be.oneOf([404, 503]);
+  });
+}

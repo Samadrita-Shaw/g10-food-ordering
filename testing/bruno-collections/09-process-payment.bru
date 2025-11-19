@@ -1,0 +1,56 @@
+meta {
+  name: 9. Process Payment
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{paymentServiceUrl}}/api/payments
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "orderId": "{{testOrderId}}",
+    "amount": 34.48,
+    "currency": "USD",
+    "paymentMethod": "CREDIT_CARD",
+    "paymentDetails": {
+      "cardNumber": "4111111111111111",
+      "expiryMonth": "12",
+      "expiryYear": "2025",
+      "cvv": "123",
+      "cardHolderName": "Test User"
+    },
+    "billingAddress": {
+      "street": "123 Test Street",
+      "city": "Test City",
+      "state": "TS",
+      "zipCode": "12345",
+      "country": "USA"
+    }
+  }
+}
+
+tests {
+  test("Payment processed successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('COMPLETED');
+    
+    // Store payment ID for subsequent tests
+    bru.setEnvVar("paymentId", res.body.id);
+  });
+  
+  test("Payment data is correct", function() {
+    expect(res.body.amount).to.equal(34.48);
+    expect(res.body.currency).to.equal('USD');
+    expect(res.body.orderId).to.equal(bru.getEnvVar("testOrderId"));
+  });
+}

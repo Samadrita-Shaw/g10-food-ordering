@@ -24,13 +24,15 @@ tests {
   test("Login successful", function() {
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('token');
-    expect(res.body).to.have.property('user');
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('email');
   });
   
-  test("Token is valid format", function() {
+  test("JWT token is valid format", function() {
     expect(res.body.token).to.be.a('string');
+    expect(res.body.token).to.match(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/);
     // Store token for subsequent requests
     bru.setEnvVar("authToken", res.body.token);
-    bru.setEnvVar("userId", res.body.user.id);
+    bru.setEnvVar("userId", res.body.id);
   });
 }

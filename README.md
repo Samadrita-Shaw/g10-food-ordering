@@ -1,7 +1,7 @@
-# G10 Food Ordering Microservices Application
+# G10 Food Ordering Microservices Application (100% Spring Boot)
 
 ## 🏆 Project Overview
-A **complete microservices-based food ordering platform** implementing modern service design patterns, multiple communication protocols, and cloud-native deployment practices. This project demonstrates enterprise-grade architecture with 6 microservices, event-driven communication, and comprehensive testing strategies.
+A **complete Spring Boot microservices-based food ordering platform** implementing enterprise-grade Java architecture, modern service design patterns, and cloud-native deployment practices. This project demonstrates enterprise-grade Spring Boot ecosystem with 6 microservices, event-driven communication, and comprehensive security.
 
 ## 🎯 Problem Domain
 The application solves the comprehensive food ordering domain by providing:
@@ -12,76 +12,78 @@ The application solves the comprehensive food ordering domain by providing:
 - **Real-time delivery tracking** with driver management
 - **API gateway** for unified access and cross-cutting concerns
 
-## 🏗️ Microservices Architecture
+## 🏗️ Spring Boot Microservices Architecture
 
 ### Service Decomposition Strategy
-**Decomposition by Business Capability**: Each service represents a distinct business capability in the food ordering domain with independent data stores and deployment pipelines.
+**Decomposition by Business Capability**: Each service represents a distinct business capability in the food ordering domain with independent data stores and deployment pipelines using Spring Boot 3.2.0 and Java 17.
 
-### ✅ Implemented Services (6 Microservices)
+### ✅ Implemented Services (6 Spring Boot Microservices)
 
-1. **🚪 Gateway Service** (Port 3000)
-   - API Gateway pattern implementation
-   - GraphQL and REST endpoint aggregation
-   - Authentication middleware and rate limiting
-   - Circuit breaker for fault tolerance
-   - Redis caching layer
+1. **🚪 Gateway Service** (Port 8080) - **gateway-springboot/**
+   - **Spring Cloud Gateway** implementation
+   - Circuit breaker pattern with Resilience4j
+   - Request routing to downstream services
+   - JWT authentication integration
+   - Redis caching layer for performance
 
-2. **👤 User Service** (Port 3001)
-   - User registration, authentication, profile management
-   - JWT token generation and validation
-   - Address management with geospatial indexing
-   - User preferences and dietary restrictions
-   - MongoDB data store
+2. **👤 User Service** (Port 8081) - **user-service-springboot/**
+   - **Spring Security + JWT** authentication
+   - User registration, profile management
+   - **Spring Data MongoDB** integration
+   - Password encryption with BCrypt
+   - RESTful APIs with validation
 
-3. **🍽️ Catalog Service** (Port 3002)
+3. **🍽️ Catalog Service** (Port 8082) - **catalog-service-springboot/**
    - Restaurant and menu item management
-   - Geospatial restaurant search by location
+   - **Spring Data MongoDB** with custom queries
    - Menu categorization and ingredient tracking
    - Restaurant ratings and reviews
-   - MongoDB with geospatial indexes
+   - RESTful APIs with DTOs
 
-4. **📦 Order Service** (Port 3003)
+4. **📦 Order Service** (Port 8083) - **order-service-springboot/**
+   - **Spring Data JPA** with PostgreSQL
    - Order creation, management, and tracking
-   - **CQRS pattern implementation** (Command Query Responsibility Segregation)
-   - **Saga pattern orchestration** for distributed transactions
-   - Order state management with compensation logic
-   - PostgreSQL for ACID transactions
+   - **CQRS pattern implementation** with Spring
+   - Complex entity relationships (Order, OrderItem, OrderEvent)
+   - Event sourcing with RabbitMQ
 
-5. **💳 Payment Service** (Port 3004)
+5. **💳 Payment Service** (Port 8084) - **payment-service-springboot/**
+   - **Spring Boot gRPC** integration
    - Payment processing with multiple gateways
-   - **gRPC server implementation** (Port 50051)
-   - Payment method management
-   - Refund processing and transaction logging
-   - PostgreSQL for financial data integrity
+   - **Spring Data JPA** with PostgreSQL
+   - Transaction management
+   - Financial data integrity
 
-6. **🚚 Delivery Service** (Port 3005)
-   - Real-time delivery tracking and driver management
-   - Location updates with geospatial data
-   - Driver assignment algorithms
-   - Delivery status management
-   - Python/FastAPI with MongoDB
+6. **🚚 Delivery Service** (Port 8085) - **delivery-service-springboot/**
+   - **Spring WebSocket** for real-time tracking
+   - **Spring Data MongoDB** for location data
+   - Driver assignment and management
+   - Real-time delivery status updates
+   - Event-driven communication
 
 ## 🔄 Communication Mechanisms ✅
 
-### 1. **REST APIs** 
+### 1. **REST APIs (Spring Web)** 
 - Primary communication for CRUD operations across all services
-- OpenAPI/Swagger documentation for each service
-- JWT authentication middleware
-- Error handling with proper HTTP status codes
+- **Spring Boot Actuator** for health checks and monitoring
+- **Spring Security** JWT authentication middleware
+- **Spring Validation** with proper error handling
+- **OpenAPI 3.0** documentation with Springdoc
 
-### 2. **gRPC** 
+### 2. **gRPC (Spring Boot gRPC Starter)** 
 - High-performance communication between Order and Payment services
-- Protocol Buffer definitions with typed contracts
+- Protocol Buffer definitions with Spring integration
 - Server streaming for real-time payment status
-- Implemented in Payment Service (Port 50051)
+- Implemented in Payment Service with Spring Boot gRPC
 
-### 3. **GraphQL** 
-- Flexible data fetching for mobile/web clients via Gateway
-- Type-safe schema with resolvers
-- Real-time subscriptions for order updates
-- Apollo Server implementation
+### 3. **Spring Cloud Gateway** 
+- Centralized routing and load balancing
+- Circuit breaker integration with Resilience4j
+- Request/response transformation
+- JWT token validation at gateway level
 
-### 4. **Message Broker (RabbitMQ)** 
+### 4. **Message Broker (Spring AMQP + RabbitMQ)** 
+- **Spring AMQP** for RabbitMQ integration
 - Asynchronous event-driven communication
 - Topic-based routing for order lifecycle events
 - Dead letter queues for failed message handling
@@ -128,9 +130,20 @@ The application solves the comprehensive food ordering domain by providing:
 
 ## 💾 Technology Stack
 
-### **Backend Services**
-- **Node.js 18** (5 services): Express.js, TypeScript support
-- **Python 3.9** (1 service): FastAPI, AsyncIO for high performance
+### **Backend Framework**
+- **Spring Boot 3.2.0**: Enterprise Java framework for all 6 microservices
+- **Java 17**: Latest LTS version with modern language features
+- **Maven**: Build automation and dependency management
+- **Spring Cloud**: Microservices patterns and distributed systems
+
+### **Spring Framework Stack**
+- **Spring Web**: RESTful APIs and HTTP handling
+- **Spring Security**: Authentication, authorization, and JWT
+- **Spring Data JPA**: PostgreSQL integration with Hibernate
+- **Spring Data MongoDB**: MongoDB integration with custom queries
+- **Spring AMQP**: RabbitMQ messaging integration
+- **Spring Cloud Gateway**: API Gateway with circuit breakers
+- **Spring Boot Actuator**: Health checks and monitoring
 
 ### **Databases**
 - **MongoDB 5.0**: Document storage with geospatial capabilities
@@ -142,88 +155,94 @@ The application solves the comprehensive food ordering domain by providing:
 
 ### **Containerization & Orchestration**
 - **Docker**: Multi-stage builds with health checks
+- **Docker Compose**: Local development environment
 - **Kubernetes**: Production-ready manifests with HPA
-- **Minikube**: Local development cluster
 
 ### **API & Documentation**
-- **GraphQL**: Apollo Server with subscriptions
-- **gRPC**: Protocol Buffers with type safety
+- **Spring Boot gRPC**: Protocol Buffers with type safety
+- **Springdoc OpenAPI**: API documentation generation
+- **Spring WebSocket**: Real-time communication
 - **OpenAPI/Swagger**: REST API documentation
 
-## 📂 Project Structure
+## 📂 Project Structure (100% Spring Boot)
 
 ```
 g10-food-ordering/
 ├── README.md                           # Complete project documentation
-├── build-and-deploy.sh                 # Automated deployment script
+├── start-springboot-services.sh       # Spring Boot deployment script
 ├── docs/                               # Architecture diagrams
 │   ├── architecture-overview.md
 │   ├── api-documentation.md
 │   └── deployment-guide.md
 ├── dev-infra/                          # Development infrastructure
-│   ├── docker-compose.yml              # Local development setup
+│   ├── docker-compose.yml              # Spring Boot services setup
 │   └── k8s/                           # Kubernetes manifests
 │       ├── namespace.yaml
 │       ├── secrets.yaml
 │       ├── infrastructure.yaml         # MongoDB, PostgreSQL, RabbitMQ, Redis
-│       └── services.yaml              # All microservice deployments
-├── gateway/                           # API Gateway Service (Node.js)
+│       └── services.yaml              # All Spring Boot deployments
+├── gateway-springboot/                # Spring Cloud Gateway Service
 │   ├── Dockerfile
-│   ├── package.json
-│   ├── src/
-│   │   ├── app.js                     # Express + Apollo Server setup
-│   │   ├── graphql/                   # GraphQL schema and resolvers
-│   │   ├── middleware/                # Auth, rate limiting, CORS
-│   │   ├── routes/                    # REST proxy routes
-│   │   └── utils/circuitBreaker.js    # Circuit breaker implementation
-├── user-service/                     # User Management Service (Node.js)
+│   ├── pom.xml                        # Maven dependencies
+│   └── src/main/java/com/foodordering/gateway/
+│       ├── GatewayServiceApplication.java # Main Spring Boot app
+│       ├── config/GatewayConfig.java  # Route configuration
+│       └── controller/FallbackController.java # Circuit breaker fallbacks
+├── user-service-springboot/           # User Management Service
 │   ├── Dockerfile
-│   ├── src/
-│   │   ├── models/user.js            # User model with bcrypt
-│   │   ├── routes/auth.js            # Authentication endpoints
-│   │   ├── routes/profile.js         # Profile management
-│   │   ├── middleware/auth.js        # JWT validation
-│   │   └── services/messageHandler.js # RabbitMQ integration
-├── catalog-service/                  # Restaurant Catalog Service (Node.js)
+│   ├── pom.xml                        # Spring Boot dependencies
+│   └── src/main/java/com/foodordering/user/
+│       ├── UserServiceApplication.java # Main Spring Boot app
+│       ├── entity/User.java           # User entity with MongoDB
+│       ├── repository/UserRepository.java # Spring Data MongoDB
+│       ├── controller/UserController.java # REST endpoints
+│       ├── service/UserService.java   # Business logic
+│       ├── dto/                       # Data Transfer Objects
+│       ├── config/SecurityConfig.java # Spring Security + JWT
+│       └── util/JwtUtil.java          # JWT utilities
+├── catalog-service-springboot/        # Restaurant Catalog Service
 │   ├── Dockerfile
-│   ├── src/
-│   │   ├── models/restaurant.js      # Restaurant model with geospatial
-│   │   ├── models/menuItem.js        # Menu item model
-│   │   ├── routes/restaurants.js     # Restaurant CRUD operations
-│   │   ├── routes/search.js          # Geospatial search endpoints
-│   │   └── services/messageHandler.js # Event handling
-├── order-service/                    # Order Processing Service (Node.js)
+│   ├── pom.xml                        # Spring Boot dependencies
+│   └── src/main/java/com/foodordering/catalog/
+│       ├── CatalogServiceApplication.java # Main Spring Boot app
+│       ├── entity/                    # Restaurant, MenuItem entities
+│       ├── repository/                # Spring Data MongoDB repositories
+│       ├── controller/                # REST controllers
+│       ├── service/                   # Business services
+│       └── dto/                       # Data Transfer Objects
+├── order-service-springboot/          # Order Processing Service
 │   ├── Dockerfile
-│   ├── src/
-│   │   ├── models/                   # PostgreSQL models (Sequelize)
-│   │   ├── cqrs/                     # CQRS implementation
-│   │   │   ├── commands/             # Command handlers
-│   │   │   └── queries/              # Query handlers
-│   │   ├── saga/                     # Saga pattern implementation
-│   │   │   ├── orderSaga.js          # Main saga orchestrator
-│   │   │   └── compensationHandlers.js # Rollback logic
-│   │   ├── grpc/clients/             # gRPC client for Payment service
-│   │   └── services/messageHandler.js # RabbitMQ integration
-├── payment-service/                  # Payment Processing Service (Node.js)
+│   ├── pom.xml                        # Spring Boot + JPA dependencies
+│   └── src/main/java/com/foodordering/order/
+│       ├── OrderServiceApplication.java # Main Spring Boot app
+│       ├── entity/                    # Order, OrderItem, OrderEvent entities
+│       │   ├── Order.java             # JPA entity with relationships
+│       │   ├── OrderItem.java         # Order item entity
+│       │   └── OrderEvent.java        # Event sourcing entity
+│       ├── repository/OrderRepository.java # Spring Data JPA with custom queries
+│       ├── controller/OrderController.java # REST endpoints
+│       ├── service/OrderService.java  # Business logic with CQRS
+│       └── config/                    # RabbitMQ and JPA configuration
+├── payment-service-springboot/        # Payment Processing Service
 │   ├── Dockerfile
-│   ├── src/
-│   │   ├── models/                   # PostgreSQL models
-│   │   ├── grpc/                     # gRPC server implementation
-│   │   │   ├── payment.proto         # Protocol buffer definition
-│   │   │   └── paymentGrpcService.js # gRPC service handlers
-│   │   ├── routes/                   # REST endpoints
-│   │   └── services/               
-│   │       ├── paymentGateway.js     # Payment gateway integration
-│   │       └── messageHandler.js     # Event handling
-└── delivery-service/                 # Delivery Tracking Service (Python)
+│   ├── pom.xml                        # Spring Boot + gRPC dependencies
+│   └── src/main/java/com/foodordering/payment/
+│       ├── PaymentServiceApplication.java # Main Spring Boot app
+│       ├── entity/                    # Payment entities with JPA
+│       ├── repository/                # Spring Data JPA repositories
+│       ├── controller/                # REST controllers
+│       ├── service/                   # Business services
+│       └── grpc/                      # gRPC server implementation
+└── delivery-service-springboot/       # Delivery Tracking Service
     ├── Dockerfile
-    ├── requirements.txt              # Python dependencies
-    ├── main.py                       # FastAPI application
-    └── app/
-        ├── models/delivery.py        # Pydantic models
-        ├── services/delivery_service.py # Business logic
-        ├── services/message_handler.py # RabbitMQ integration
-        └── database.py               # MongoDB connection
+    ├── pom.xml                        # Spring Boot + WebSocket dependencies
+    └── src/main/java/com/foodordering/delivery/
+        ├── DeliveryServiceApplication.java # Main Spring Boot app
+        ├── entity/                    # Delivery entities with MongoDB
+        ├── repository/                # Spring Data MongoDB repositories
+        ├── controller/                # REST and WebSocket controllers
+        ├── service/                   # Business services
+        └── config/                    # WebSocket and MongoDB configuration
 ```
 
 ## 🚀 Getting Started
@@ -232,8 +251,8 @@ g10-food-ordering/
 ```bash
 # Required Software
 - Docker Desktop 4.0+
-- Node.js 18+
-- Python 3.9+
+- Java 17+ (JDK)
+- Maven 3.8+
 - kubectl (for Kubernetes deployment)
 - Minikube (for local Kubernetes cluster)
 
@@ -241,6 +260,7 @@ g10-food-ordering/
 - Postman/Insomnia (API testing)
 - MongoDB Compass (database management)
 - pgAdmin (PostgreSQL management)
+- IntelliJ IDEA / VS Code (Spring Boot development)
 ```
 
 ### 🔧 Quick Setup (3 Options)
@@ -251,28 +271,32 @@ g10-food-ordering/
 git clone <repository-url>
 cd g10-food-ordering
 
-# Build and deploy everything
-chmod +x build-and-deploy.sh
-./build-and-deploy.sh
+# Build and deploy all Spring Boot services
+chmod +x start-springboot-services.sh
+./start-springboot-services.sh
 
 # Access the application
-# Gateway: http://localhost:3000
-# GraphQL Playground: http://localhost:3000/graphql
+# Gateway: http://localhost:8080
+# User Service: http://localhost:8081
+# Catalog Service: http://localhost:8082
+# Order Service: http://localhost:8083
+# Payment Service: http://localhost:8084
+# Delivery Service: http://localhost:8085
 ```
 
 #### Option 2: Local Development Mode
 ```bash
 # Start infrastructure services
 cd dev-infra
-docker-compose up -d
+docker-compose up -d mongodb postgresql rabbitmq redis
 
-# Install and start each service (in separate terminals)
-cd gateway && npm install && npm start          # Terminal 1
-cd user-service && npm install && npm start     # Terminal 2  
-cd catalog-service && npm install && npm start  # Terminal 3
-cd order-service && npm install && npm start    # Terminal 4
-cd payment-service && npm install && npm start  # Terminal 5
-cd delivery-service && pip install -r requirements.txt && python main.py # Terminal 6
+# Build and start each Spring Boot service (in separate terminals)
+cd gateway-springboot && mvn spring-boot:run          # Terminal 1 (Port 8080)
+cd user-service-springboot && mvn spring-boot:run     # Terminal 2 (Port 8081)
+cd catalog-service-springboot && mvn spring-boot:run  # Terminal 3 (Port 8082)
+cd order-service-springboot && mvn spring-boot:run    # Terminal 4 (Port 8083)
+cd payment-service-springboot && mvn spring-boot:run  # Terminal 5 (Port 8084)
+cd delivery-service-springboot && mvn spring-boot:run # Terminal 6 (Port 8085)
 ```
 
 #### Option 3: Kubernetes Deployment
@@ -281,9 +305,9 @@ cd delivery-service && pip install -r requirements.txt && python main.py # Termi
 minikube start
 
 # Deploy with script
-./build-and-deploy.sh
+./start-springboot-services.sh
 
-# Or manual deployment
+# Or manual deployment with kubectl
 kubectl apply -f dev-infra/k8s/
 
 # Access services
@@ -295,136 +319,145 @@ minikube service gateway-service -n food-ordering --url
 ### Health Checks
 ```bash
 # Verify all services are running
-curl http://localhost:3000/health  # Gateway
-curl http://localhost:3001/health  # User Service
-curl http://localhost:3002/health  # Catalog Service  
-curl http://localhost:3003/health  # Order Service
-curl http://localhost:3004/health  # Payment Service
-curl http://localhost:3005/health  # Delivery Service
+curl http://localhost:8080/actuator/health  # Gateway (Spring Cloud Gateway)
+curl http://localhost:8081/actuator/health  # User Service
+curl http://localhost:8082/actuator/health  # Catalog Service
+curl http://localhost:8083/actuator/health  # Order Service
+curl http://localhost:8084/actuator/health  # Payment Service
+curl http://localhost:8085/actuator/health  # Delivery Service
 ```
 
-### End-to-End User Journey Test
+### End-to-End Spring Boot System Test
 ```bash
-# 1. Register a new user
-curl -X POST http://localhost:3001/api/auth/register \
+# 1. Register a new user (User Service)
+curl -X POST http://localhost:8081/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
     "password": "password123",
-    "profile": {
-      "firstName": "John",
-      "lastName": "Doe",
-      "phone": "+1234567890"
-    }
+    "firstName": "John",
+    "lastName": "Doe",
+    "phone": "+1234567890"
   }'
 
 # 2. Login and get JWT token
-TOKEN=$(curl -X POST http://localhost:3001/api/auth/login \
+TOKEN=$(curl -X POST http://localhost:8081/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}' \
   | jq -r '.token')
 
-# 3. Get restaurants
-curl http://localhost:3002/api/restaurants
+# 3. Get restaurants (Catalog Service)
+curl http://localhost:8082/api/restaurants
 
-# 4. Place an order
-curl -X POST http://localhost:3003/api/orders \
+# 4. Place an order (Order Service)
+curl -X POST http://localhost:8083/api/orders \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "restaurant_id": "restaurant_id_here",
-    "items": [{"menu_item_id": "item_id", "quantity": 2}],
-    "delivery_address": {
+    "restaurantId": "restaurant_id_here",
+    "items": [{"menuItemId": "item_id", "quantity": 2}],
+    "customerAddress": {
       "street": "123 Main St",
       "city": "City",
       "zipCode": "12345"
     }
   }'
 
-# 5. Test GraphQL (via Gateway)
-curl -X POST http://localhost:3000/graphql \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "query { restaurants { id name cuisine_type rating } }"
-  }'
+# 5. Test via Spring Cloud Gateway
+curl -X GET http://localhost:8080/user-service/api/users/profile \
+  -H "Authorization: Bearer $TOKEN"
+
+# 6. Health check endpoints (Spring Boot Actuator)
+curl http://localhost:8081/actuator/health  # User Service
+curl http://localhost:8082/actuator/health  # Catalog Service
+curl http://localhost:8083/actuator/health  # Order Service
 ```
 
-## 📊 API Documentation
+## 📊 API Documentation (Spring Boot Services)
 
-### 🚪 Gateway Service (Port 3000)
-- **GraphQL Playground**: http://localhost:3000/graphql
-- **Health Check**: GET http://localhost:3000/health
-- **REST Proxy**: All service endpoints proxied through gateway
+### 🚪 Gateway Service (Port 8080) - Spring Cloud Gateway
+- **Health Check**: GET http://localhost:8080/actuator/health
+- **Route Management**: All service endpoints routed through gateway
+- **Circuit Breaker**: Automatic fallback for failed services
+- **Load Balancing**: Round-robin service discovery
 
-### 👤 User Service (Port 3001)
+### 👤 User Service (Port 8081) - Spring Boot + MongoDB
 ```
-POST /api/auth/register     - Register new user
-POST /api/auth/login        - User authentication  
-GET  /api/users/profile     - Get user profile
-PUT  /api/users/profile     - Update user profile
+POST /api/auth/register     - Register new user with JWT
+POST /api/auth/login        - User authentication with JWT
+GET  /api/users/profile     - Get user profile (JWT required)
+PUT  /api/users/profile     - Update user profile (JWT required)
 POST /api/users/addresses   - Add delivery address
 GET  /api/users/addresses   - Get user addresses
+GET  /actuator/health       - Spring Boot health check
 ```
 
-### 🍽️ Catalog Service (Port 3002)
+### 🍽️ Catalog Service (Port 8082) - Spring Boot + MongoDB
 ```
 GET  /api/restaurants               - List all restaurants
-GET  /api/restaurants/:id           - Get restaurant details
-GET  /api/restaurants/:id/menu      - Get restaurant menu
+GET  /api/restaurants/{id}          - Get restaurant details
+GET  /api/restaurants/{id}/menu     - Get restaurant menu
 GET  /api/restaurants/search        - Search restaurants by location/cuisine
 POST /api/restaurants               - Create restaurant (admin)
-PUT  /api/restaurants/:id           - Update restaurant
+PUT  /api/restaurants/{id}          - Update restaurant
+GET  /actuator/health               - Spring Boot health check
 GET  /api/menu-items                - Get menu items with filters
 ```
 
-### 📦 Order Service (Port 3003)
+### 📦 Order Service (Port 8083) - Spring Boot + PostgreSQL + JPA
 ```
 POST /api/orders                    - Create new order (CQRS Command)
 GET  /api/orders                    - Get user orders (CQRS Query)
-GET  /api/orders/:id                - Get order details
-PUT  /api/orders/:id/status         - Update order status
-GET  /api/orders/:id/track          - Real-time order tracking
-GET  /api/orders/:id/events         - Get order event history
+GET  /api/orders/{id}               - Get order details with items
+PUT  /api/orders/{id}/status        - Update order status
+GET  /api/orders/{id}/events        - Get order event history
+GET  /api/orders/search             - Search orders with filters
+GET  /actuator/health               - Spring Boot health check
 ```
 
-### 💳 Payment Service (Port 3004)
+### 💳 Payment Service (Port 8084) - Spring Boot + JPA + gRPC
 ```
 # REST Endpoints
-POST /api/payments                  - Process payment
-GET  /api/payments/:id              - Get payment details
-POST /api/payments/:id/refund       - Process refund
-GET  /api/users/:id/payment-methods - Get saved payment methods
+POST /api/payments                  - Process payment via Spring Boot
+GET  /api/payments/{id}             - Get payment details
+POST /api/payments/{id}/refund      - Process refund
+GET  /api/users/{id}/payment-methods - Get saved payment methods
+GET  /actuator/health               - Spring Boot health check
 
-# gRPC Service (Port 50051)
+# gRPC Service (Spring Boot gRPC Starter)
 ProcessPayment(PaymentRequest) → PaymentResponse
 RefundPayment(RefundRequest) → RefundResponse  
 GetPaymentStatus(PaymentStatusRequest) → PaymentStatusResponse
 ```
 
-### 🚚 Delivery Service (Port 3005)
+### 🚚 Delivery Service (Port 8085) - Spring Boot + MongoDB + WebSocket
 ```
 GET  /api/deliveries                - List deliveries
 POST /api/deliveries                - Create delivery
-GET  /api/deliveries/:id            - Get delivery details
-POST /api/deliveries/:id/location   - Update delivery location (driver)
-GET  /api/deliveries/:id/tracking   - Real-time tracking
+GET  /api/deliveries/{id}           - Get delivery details
+POST /api/deliveries/{id}/location  - Update delivery location (driver)
+GET  /api/deliveries/{id}/tracking  - Real-time tracking
 GET  /api/drivers/available         - Get available drivers
-POST /api/drivers/:id/status        - Update driver status
+POST /api/drivers/{id}/status       - Update driver status
+GET  /actuator/health               - Spring Boot health check
+
+# WebSocket Endpoints
+/ws/delivery/{id}                   - Real-time delivery updates
 ```
 
-## 🔒 Security Implementation
+## 🔒 Security Implementation (Spring Boot)
 
 ### 🛡️ Authentication & Authorization
-- **JWT Tokens**: Stateless authentication with 24h expiration
-- **Password Security**: bcrypt hashing with salt rounds
-- **Route Protection**: Middleware validation on protected endpoints
-- **Role-Based Access**: Admin, customer, and driver role separation
+- **Spring Security + JWT**: Stateless authentication with configurable expiration
+- **BCrypt Password Encoding**: Secure password hashing with Spring Security
+- **Method-Level Security**: @PreAuthorize annotations on protected endpoints
+- **Role-Based Access Control**: Admin, customer, and driver role separation
 
 ### 🔐 API Security
-- **Rate Limiting**: 100 requests/minute per IP via Gateway
-- **Input Validation**: Schema validation on all inputs
-- **CORS Configuration**: Secure cross-origin resource sharing
-- **SQL Injection Prevention**: Parameterized queries with ORM
+- **Spring Cloud Gateway Filters**: Rate limiting and request validation
+- **Bean Validation**: @Valid annotations with custom validators
+- **CORS Configuration**: WebMvcConfigurer for cross-origin settings
+- **SQL Injection Prevention**: JPA parameterized queries with Spring Data
 
 ### 🏗️ Infrastructure Security
 - **Container Security**: Non-root user execution, minimal base images
@@ -434,29 +467,29 @@ POST /api/drivers/:id/status        - Update driver status
 
 ## 📈 Monitoring & Observability
 
-### 🏥 Health Checks & Probes
+### 🏥 Health Checks & Probes (Spring Boot Actuator)
 ```yaml
-# Kubernetes Health Probes Example
+# Kubernetes Health Probes for Spring Boot Services
 livenessProbe:
   httpGet:
-    path: /health
-    port: 3000
+    path: /actuator/health/liveness
+    port: 8080
   initialDelaySeconds: 30
   periodSeconds: 10
 
 readinessProbe:
   httpGet:  
-    path: /health
-    port: 3000
+    path: /actuator/health/readiness
+    port: 8080
   initialDelaySeconds: 5
   periodSeconds: 5
 ```
 
-### 📝 Structured Logging
-- **Winston** (Node.js): JSON structured logs with correlation IDs
-- **Python Logging**: Structured logging with request tracing
-- **Log Levels**: DEBUG, INFO, WARN, ERROR with environment-based configuration
-- **Correlation IDs**: End-to-end request tracing across services
+### 📝 Structured Logging (Spring Boot)
+- **Logback**: JSON structured logs with Spring Boot configuration
+- **Spring Cloud Sleuth**: Distributed tracing with correlation IDs
+- **Log Levels**: DEBUG, INFO, WARN, ERROR with Spring profiles
+- **MDC Logging**: Mapped Diagnostic Context for request tracing
 
 ### 📊 Metrics & Analytics (Implementation Ready)
 - Application performance metrics collection points
