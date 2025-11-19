@@ -1,0 +1,57 @@
+meta {
+  name: 7. Create Order
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{orderServiceUrl}}/api/orders
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "restaurant_id": "{{restaurantId}}",
+    "items": [
+      {
+        "menu_item_id": "{{menuItemId}}",
+        "quantity": 2,
+        "special_instructions": "No onions please"
+      }
+    ],
+    "delivery_address": {
+      "street": "123 Test Street",
+      "city": "Test City",
+      "state": "TS",
+      "zipCode": "12345",
+      "coordinates": {
+        "lat": 40.7128,
+        "lng": -74.0060
+      }
+    },
+    "special_instructions": "Ring the doorbell twice"
+  }
+}
+
+tests {
+  test("Order created successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('order_id');
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('pending');
+  });
+  
+  test("Order contains correct data", function() {
+    expect(res.body).to.have.property('items');
+    expect(res.body.items).to.be.an('array');
+    expect(res.body.items.length).to.be.above(0);
+    
+    // Store order ID for subsequent tests
+    bru.setEnvVar("orderId", res.body.order_id);
+  });
+}

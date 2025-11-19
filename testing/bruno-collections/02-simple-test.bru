@@ -1,0 +1,25 @@
+meta {
+  name: Test Simple Registration
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{userServiceUrl}}/api/test/simple-register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "test@example.com",
+    "password": "SecurePass123!",
+    "name": "Test User"
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

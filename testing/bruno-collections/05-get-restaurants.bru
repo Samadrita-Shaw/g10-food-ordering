@@ -1,0 +1,32 @@
+meta {
+  name: 5. Get Restaurants
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{catalogServiceUrl}}/api/restaurants
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Restaurants retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an('array');
+  });
+  
+  test("Restaurant data structure is correct", function() {
+    if (res.body.length > 0) {
+      const restaurant = res.body[0];
+      expect(restaurant).to.have.property('_id');
+      expect(restaurant).to.have.property('name');
+      expect(restaurant).to.have.property('cuisine_type');
+      
+      // Store first restaurant ID for subsequent tests
+      bru.setEnvVar("restaurantId", restaurant._id);
+    }
+  });
+}

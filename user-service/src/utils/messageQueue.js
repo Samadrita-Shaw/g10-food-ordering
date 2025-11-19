@@ -85,7 +85,7 @@ const handleOrderEvent = async (event, eventType) => {
 
 const publishEvent = async (eventType, data) => {
   if (!channel) {
-    logger.error('RabbitMQ channel not available');
+    logger.warn('RabbitMQ channel not available, skipping event publication');
     return;
   }
 

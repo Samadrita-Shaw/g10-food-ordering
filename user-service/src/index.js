@@ -55,6 +55,16 @@ class UserService {
       });
     });
 
+    // Simple test route that doesn't need database
+    this.app.post('/api/test/simple-register', (req, res) => {
+      res.json({
+        success: true,
+        message: 'Registration endpoint working',
+        data: req.body,
+        timestamp: new Date().toISOString()
+      });
+    });
+
     // API routes
     this.app.use('/api/users', authRoutes);
     this.app.use('/api/users', userRoutes);

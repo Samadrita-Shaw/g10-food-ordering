@@ -1,0 +1,41 @@
+meta {
+  name: 2. User Registration
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{userServiceUrl}}/api/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "testuser@example.com",
+    "password": "SecurePass123!",
+    "profile": {
+      "firstName": "Test",
+      "lastName": "User",
+      "phone": "+1234567890"
+    }
+  }
+}
+
+tests {
+  test("User registration successful", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('user');
+    expect(res.body).to.have.property('token');
+    expect(res.body.user.email).to.equal('testuser@example.com');
+  });
+  
+  test("JWT token is provided", function() {
+    expect(res.body.token).to.be.a('string');
+    expect(res.body.token.length).to.be.above(10);
+  });
+}

@@ -1,0 +1,31 @@
+{
+  "version": "1",
+  "name": "G10 Food Ordering API Tests",
+  "type": "collection",
+  "environments": {
+    "local": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:3000",
+        "gatewayUrl": "http://localhost:3000",
+        "userServiceUrl": "http://localhost:3001",
+        "catalogServiceUrl": "http://localhost:3002",
+        "orderServiceUrl": "http://localhost:3003",
+        "paymentServiceUrl": "http://localhost:3004",
+        "deliveryServiceUrl": "http://localhost:3005"
+      }
+    },
+    "kubernetes": {
+      "name": "Kubernetes (Minikube)",
+      "variables": {
+        "baseUrl": "http://localhost:80",
+        "gatewayUrl": "http://localhost:80",
+        "userServiceUrl": "http://localhost:3001",
+        "catalogServiceUrl": "http://localhost:3002",
+        "orderServiceUrl": "http://localhost:3003",
+        "paymentServiceUrl": "http://localhost:3004",
+        "deliveryServiceUrl": "http://localhost:3005"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+meta {
+  name: 10. GraphQL - User Orders
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{gatewayUrl}}/graphql
+  body: json
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "query": "query GetUserOrders { myOrders { id status total_amount created_at restaurant { name } items { menu_item { name price } quantity } } }"
+  }
+}
+
+tests {
+  test("GraphQL user orders query successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('data');
+    expect(res.body.data).to.have.property('myOrders');
+  });
+  
+  test("Orders data structure correct", function() {
+    const orders = res.body.data.myOrders;
+    expect(orders).to.be.an('array');
+    
+    if (orders.length > 0) {
+      const order = orders[0];
+      expect(order).to.have.property('id');
+      expect(order).to.have.property('status');
+      expect(order).to.have.property('total_amount');
+    }
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: 6. Get Restaurant Menu
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{catalogServiceUrl}}/api/restaurants/{{restaurantId}}/menu
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Menu retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an('array');
+  });
+  
+  test("Menu items have required fields", function() {
+    if (res.body.length > 0) {
+      const menuItem = res.body[0];
+      expect(menuItem).to.have.property('_id');
+      expect(menuItem).to.have.property('name');
+      expect(menuItem).to.have.property('price');
+      
+      // Store first menu item for order creation
+      bru.setEnvVar("menuItemId", menuItem._id);
+      bru.setEnvVar("menuItemPrice", menuItem.price);
+    }
+  });
+}

@@ -1,0 +1,40 @@
+meta {
+  name: 9. GraphQL - Get Restaurants
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{gatewayUrl}}/graphql
+  body: json
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "query": "query GetRestaurants { restaurants { id name cuisine_type rating address { street city } menu { id name price category } } }"
+  }
+}
+
+tests {
+  test("GraphQL query successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('data');
+    expect(res.body.data).to.have.property('restaurants');
+  });
+  
+  test("Restaurant data structure correct", function() {
+    const restaurants = res.body.data.restaurants;
+    expect(restaurants).to.be.an('array');
+    
+    if (restaurants.length > 0) {
+      const restaurant = restaurants[0];
+      expect(restaurant).to.have.property('id');
+      expect(restaurant).to.have.property('name');
+      expect(restaurant).to.have.property('cuisine_type');
+    }
+  });
+}
