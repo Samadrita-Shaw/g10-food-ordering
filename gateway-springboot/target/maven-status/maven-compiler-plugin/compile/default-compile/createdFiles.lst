@@ -1,3 +1,4 @@
 com/foodordering/gateway/config/GatewayConfig.class
 com/foodordering/gateway/controller/FallbackController.class
 com/foodordering/gateway/GatewayServiceApplication.class
+com/foodordering/gateway/config/SwaggerConfig.class

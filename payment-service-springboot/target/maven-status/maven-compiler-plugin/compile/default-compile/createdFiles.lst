@@ -1,1 +1,3 @@
+com/foodordering/payment/config/SwaggerConfig.class
 com/foodordering/payment/PaymentServiceApplication.class
+com/foodordering/payment/controller/PaymentController.class

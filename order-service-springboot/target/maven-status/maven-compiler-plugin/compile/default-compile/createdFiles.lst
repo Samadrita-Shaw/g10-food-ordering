@@ -6,4 +6,5 @@ com/foodordering/order/repository/OrderRepository.class
 com/foodordering/order/entity/Order$DeliveryAddress.class
 com/foodordering/order/entity/Order$OrderEventType.class
 com/foodordering/order/entity/OrderItem.class
+com/foodordering/order/config/SwaggerConfig.class
 com/foodordering/order/entity/Order$OrderStatus.class
