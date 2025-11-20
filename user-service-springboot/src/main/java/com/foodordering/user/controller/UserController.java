@@ -39,7 +39,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
+
     /**
      * User registration endpoint
      */
@@ -47,14 +47,14 @@ public class UserController {
     @Operation(summary = "Register a new user", description = "Create a new user account with email and password")
     public ResponseEntity<AuthResponseDto> registerUser(@Valid @RequestBody UserRegistrationDto registrationDto) {
         AuthResponseDto response = userService.registerUser(registrationDto);
-        
+
         if (response.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-    
+
     /**
      * User login endpoint
      */
@@ -62,14 +62,14 @@ public class UserController {
     @Operation(summary = "User login", description = "Authenticate user with email and password")
     public ResponseEntity<AuthResponseDto> loginUser(@Valid @RequestBody UserLoginDto loginDto) {
         AuthResponseDto response = userService.loginUser(loginDto);
-        
+
         if (response.isSuccess()) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-    
+
     /**
      * Get user profile endpoint
      */
@@ -79,9 +79,9 @@ public class UserController {
         try {
             // Extract user ID from JWT token (simplified for demo)
             String userId = extractUserIdFromAuthHeader(authHeader);
-            
+
             Optional<UserResponseDto> userProfile = userService.getUserProfile(userId);
-            
+
             if (userProfile.isPresent()) {
                 return ResponseEntity.ok(userProfile.get());
             } else {
@@ -92,31 +92,43 @@ public class UserController {
                     .body(Map.of("error", "Invalid or expired token"));
         }
     }
-    
+
     /**
      * Update user profile endpoint
      */
     @PutMapping("/profile")
     @Operation(summary = "Update user profile", description = "Update current user's profile information")
     public ResponseEntity<?> updateUserProfile(
-            @RequestHeader("Authorization") String authHeader,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @Valid @RequestBody UserResponseDto updateDto) {
         try {
-            String userId = extractUserIdFromAuthHeader(authHeader);
-            
-            Optional<UserResponseDto> updatedProfile = userService.updateUserProfile(userId, updateDto);
-            
-            if (updatedProfile.isPresent()) {
-                return ResponseEntity.ok(updatedProfile.get());
-            } else {
-                return ResponseEntity.notFound().build();
+            // Handle missing authorization header
+            if (authHeader == null || authHeader.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Authorization header is required"));
             }
-        } catch (Exception e) {
+
+            String userId = extractUserIdFromAuthHeader(authHeader);
+
+            Optional<UserResponseDto> updatedProfile = userService.updateUserProfile(userId, updateDto);
+
+            if (updatedProfile.isPresent()) {
+                UserResponseDto profile = updatedProfile.get();
+                // Return the updated profile directly - it includes email and all other fields
+                return ResponseEntity.ok(profile);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "User not found"));
+            }
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Invalid or expired token"));
+                    .body(Map.of("error", "Invalid or expired token: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Profile update failed: " + e.getMessage()));
         }
     }
-    
+
     /**
      * Deactivate user account endpoint
      */
@@ -125,9 +137,9 @@ public class UserController {
     public ResponseEntity<?> deactivateUser(@RequestHeader("Authorization") String authHeader) {
         try {
             String userId = extractUserIdFromAuthHeader(authHeader);
-            
+
             boolean deactivated = userService.deactivateUser(userId);
-            
+
             if (deactivated) {
                 return ResponseEntity.ok(Map.of("message", "Account deactivated successfully"));
             } else {
@@ -138,7 +150,7 @@ public class UserController {
                     .body(Map.of("error", "Invalid or expired token"));
         }
     }
-    
+
     /**
      * Simple test endpoint for Bruno testing
      */
@@ -152,7 +164,7 @@ public class UserController {
                 "timestamp", java.time.LocalDateTime.now()
         ));
     }
-    
+
     /**
      * Health check endpoint
      */
@@ -183,21 +195,35 @@ public class UserController {
                     .body(Map.of("error", "Logout failed: " + e.getMessage()));
         }
     }
-    
+
     /**
-     * Extract user ID from Authorization header (simplified implementation)
+     * Extract user ID from Authorization header with improved error handling
      */
     private String extractUserIdFromAuthHeader(String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            try {
-                // Use the existing JwtUtil to extract user ID from token
-                return jwtUtil.getUserIdFromToken(token);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid or expired token: " + e.getMessage());
-            }
+        if (authHeader == null || authHeader.trim().isEmpty()) {
+            throw new IllegalArgumentException("Authorization header is missing");
         }
-        throw new IllegalArgumentException("Invalid authorization header");
-    }
 
+        if (!authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid authorization header format");
+        }
+
+        String token = authHeader.substring(7);
+
+        if (token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token is missing from authorization header");
+        }
+
+        try {
+            // Validate token first
+            if (!jwtUtil.validateToken(token)) {
+                throw new IllegalArgumentException("Token is invalid or expired");
+            }
+
+            // Use the existing JwtUtil to extract user ID from token
+            return jwtUtil.getUserIdFromToken(token);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid or expired token: " + e.getMessage());
+        }
+    }
 }
