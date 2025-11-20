@@ -263,3 +263,7 @@ catalog-service-springboot/target/
 order-service-springboot/target/
 payment-service-springboot/target/
 delivery-service-springboot/target/
+# Additional target directory patterns
+**/target/**
+*/target/*
+target/**/*
