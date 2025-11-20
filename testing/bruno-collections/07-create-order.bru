@@ -16,30 +16,21 @@ headers {
 
 body:json {
   {
-    "restaurantId": "{{testRestaurantId}}",
-    "items": [
-      {
-        "menuItemId": "test-menu-item-1",
-        "quantity": 2,
-        "unitPrice": 12.99,
-        "specialInstructions": "No onions please"
-      },
-      {
-        "menuItemId": "test-menu-item-2",
-        "quantity": 1,
-        "unitPrice": 8.50,
-        "specialInstructions": "Extra cheese"
-      }
-    ],
-    "customerAddress": {
+    "userId": "{{userId}}",
+    "restaurantId": "{{restaurantId}}",
+    "totalAmount": 34.48,
+    "deliveryFee": 2.99,
+    "taxAmount": 2.76,
+    "deliveryAddress": {
       "street": "123 Test Street",
       "city": "Test City",
       "state": "TS",
       "zipCode": "12345",
-      "country": "USA"
+      "country": "USA",
+      "latitude": 40.7128,
+      "longitude": -74.0060
     },
-    "specialInstructions": "Ring the doorbell twice",
-    "paymentMethod": "CREDIT_CARD"
+    "specialInstructions": "Ring the doorbell twice"
   }
 }
 
@@ -48,6 +39,10 @@ tests {
     expect(res.status).to.equal(201);
     expect(res.body).to.have.property('id');
     expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('PENDING');
+    
+    // Store order ID for subsequent tests
+    bru.setEnvVar("orderId", res.body.id);
     expect(res.body.status).to.equal('PENDING');
     
     // Store order ID for subsequent tests

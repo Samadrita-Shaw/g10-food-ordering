@@ -5,6 +5,9 @@ spring:
       host: mongodb
       port: 27017
       database: food_ordering_users
+      username: admin
+      password: password
+      authentication-database: admin
 
 jwt:
   secret: "dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3Jqd3R0b2tlbnNpbmZvb2RvcmRlcmluZ2FwcA=="

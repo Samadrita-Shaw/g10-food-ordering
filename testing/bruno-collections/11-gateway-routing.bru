@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{gatewayUrl}}/user-service/api/users/profile
+  url: {{gatewayUrl}}/api/users/profile
 }
 
 headers {
@@ -30,7 +30,7 @@ meta {
 }
 
 get {
-  url: {{gatewayUrl}}/catalog-service/api/restaurants
+  url: {{gatewayUrl}}/api/restaurants
 }
 
 headers {
@@ -40,7 +40,8 @@ headers {
 tests {
   test("Gateway routes to Catalog Service correctly", function() {
     expect(res.status).to.equal(200);
-    expect(res.body).to.be.an('array');
+    expect(res.body).to.have.property('content');
+    expect(res.body.content).to.be.an('array');
   });
 }
 

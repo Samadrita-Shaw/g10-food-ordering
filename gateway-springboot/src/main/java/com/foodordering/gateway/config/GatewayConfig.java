@@ -16,23 +16,23 @@ public class GatewayConfig {
         return builder.routes()
                 // User Service Routes
                 .route("user-service", r -> r.path("/api/users/**")
-                        .uri("http://localhost:3001"))
+                        .uri("http://user-service:8080"))
                 
                 // Catalog Service Routes
                 .route("catalog-service", r -> r.path("/api/restaurants/**", "/api/catalog/**")
-                        .uri("http://localhost:3002"))
+                        .uri("http://catalog-service:8080"))
                 
                 // Order Service Routes
                 .route("order-service", r -> r.path("/api/orders/**")
-                        .uri("http://localhost:3003"))
+                        .uri("http://order-service:8080"))
                 
                 // Payment Service Routes
                 .route("payment-service", r -> r.path("/api/payments/**")
-                        .uri("http://localhost:3004"))
+                        .uri("http://payment-service:8080"))
                 
                 // Delivery Service Routes
                 .route("delivery-service", r -> r.path("/api/deliveries/**")
-                        .uri("http://localhost:3005"))
+                        .uri("http://delivery-service:8080"))
                 .build();
     }
 

@@ -18,22 +18,19 @@ body:json {
   {
     "name": "Test Pizza Palace",
     "description": "Authentic Italian pizzas and pasta",
-    "cuisineType": "Italian",
+    "cuisineTypes": ["Italian", "Pizza"],
     "address": {
       "street": "123 Pizza Street",
       "city": "New York",
       "state": "NY",
       "zipCode": "10001",
-      "country": "USA"
+      "country": "USA",
+      "latitude": 40.7128,
+      "longitude": -74.006
     },
-    "location": {
-      "type": "Point",
-      "coordinates": [-74.006, 40.7128]
-    },
-    "phone": "+1-555-PIZZA",
+    "phone": "+15559999",
     "email": "info@testpizzapalace.com",
-    "rating": 4.5,
-    "isActive": true
+    "website": "https://testpizzapalace.com"
   }
 }
 
@@ -44,7 +41,7 @@ tests {
     expect(res.body.name).to.equal('Test Pizza Palace');
     
     // Store restaurant ID for subsequent tests
-    bru.setEnvVar("testRestaurantId", res.body.id);
+    bru.setEnvVar("restaurantId", res.body.id);
   });
   
   test("Restaurant data is correct", function() {

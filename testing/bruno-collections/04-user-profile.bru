@@ -21,9 +21,9 @@ tests {
   });
   
   test("Profile contains required fields", function() {
-    expect(res.body).to.have.property('firstName');
-    expect(res.body).to.have.property('lastName');
-    expect(res.body.firstName).to.equal('Test');
-    expect(res.body.lastName).to.equal('User');
+    expect(res.body).to.have.property('name');
+    expect(res.body).to.have.property('role');
+    expect(res.body.name).to.equal('Test User');
+    expect(res.body.role).to.equal('CUSTOMER');
   });
 }

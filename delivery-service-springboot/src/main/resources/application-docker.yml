@@ -5,6 +5,9 @@ spring:
       host: mongodb
       port: 27017
       database: food_ordering_delivery
+      username: admin
+      password: password
+      authentication-database: admin
   rabbitmq:
     host: rabbitmq
     port: 5672

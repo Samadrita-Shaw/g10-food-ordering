@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{userServiceUrl}}/api/auth/register
+  url: {{userServiceUrl}}/api/users/register
   body: json
   auth: none
 }
@@ -18,22 +18,25 @@ body:json {
   {
     "email": "testuser@example.com",
     "password": "SecurePass123!",
-    "firstName": "Test",
-    "lastName": "User",
-    "phone": "+1234567890"
+    "name": "Test User",
+    "phone": "+1234567890",
+    "role": "CUSTOMER"
   }
 }
 
 tests {
   test("User registration successful", function() {
     expect(res.status).to.equal(201);
-    expect(res.body).to.have.property('id');
-    expect(res.body).to.have.property('email');
-    expect(res.body.email).to.equal('testuser@example.com');
+    expect(res.body).to.have.property('success');
+    expect(res.body.success).to.equal(true);
+    expect(res.body).to.have.property('token');
   });
   
-  test("Response contains user data", function() {
-    expect(res.body.firstName).to.equal('Test');
-    expect(res.body.lastName).to.equal('User');
+  test("Response contains auth token", function() {
+    expect(res.body.token).to.be.a('string');
+    expect(res.body.token.length).to.be.above(0);
+    
+    // Save token for future requests
+    bru.setEnvVar("authToken", res.body.token);
   });
 }
