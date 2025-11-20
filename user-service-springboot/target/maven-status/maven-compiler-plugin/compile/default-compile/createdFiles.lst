@@ -6,6 +6,7 @@ com/foodordering/user/service/UserService.class
 com/foodordering/user/config/SwaggerConfig.class
 com/foodordering/user/model/UserPreferences.class
 com/foodordering/user/repository/UserRepository.class
+com/foodordering/user/security/JwtAuthenticationFilter.class
 com/foodordering/user/UserServiceApplication.class
 com/foodordering/user/dto/UserResponseDto.class
 com/foodordering/user/model/Address.class

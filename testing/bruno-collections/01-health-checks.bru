@@ -5,7 +5,9 @@ meta {
 }
 
 get {
-  url: {{gatewayUrl}}/actuator/health
+  url: http://localhost:8080/actuator/health
+  body: none
+  auth: none
 }
 
 headers {

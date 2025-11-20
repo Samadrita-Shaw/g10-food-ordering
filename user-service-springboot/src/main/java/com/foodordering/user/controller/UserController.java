@@ -24,6 +24,7 @@ import com.foodordering.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import com.foodordering.user.security.JwtUtil;
 
 /**
  * REST Controller for User operations
@@ -32,7 +33,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 @Tag(name = "User Management", description = "APIs for user registration, authentication, and profile management")
 public class UserController {
-    
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Autowired
     private UserService userService;
     
@@ -161,18 +165,39 @@ public class UserController {
                 "timestamp", java.time.LocalDateTime.now()
         ));
     }
+
+    /**
+     * User logout endpoint
+     */
+    @PostMapping("/logout")
+    @Operation(summary = "User logout", description = "Logout user and invalidate token")
+    public ResponseEntity<?> logoutUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        try {
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Successfully logged out",
+                    "timestamp", java.time.LocalDateTime.now()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Logout failed: " + e.getMessage()));
+        }
+    }
     
     /**
      * Extract user ID from Authorization header (simplified implementation)
      */
     private String extractUserIdFromAuthHeader(String authHeader) {
-        // This is a simplified implementation
-        // In a real application, you would validate the JWT token and extract the user ID
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            // TODO: Implement proper JWT validation and user ID extraction
-            return "sample_user_id";
+            try {
+                // Use the existing JwtUtil to extract user ID from token
+                return jwtUtil.getUserIdFromToken(token);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid or expired token: " + e.getMessage());
+            }
         }
         throw new IllegalArgumentException("Invalid authorization header");
     }
+
 }

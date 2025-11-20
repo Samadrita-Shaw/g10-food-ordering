@@ -5,7 +5,9 @@ meta {
 }
 
 get {
-  url: {{orderServiceUrl}}/api/orders/{{testOrderId}}
+  url: http://localhost:8083/api/orders/{{testOrderId}}
+  body: none
+  auth: none
 }
 
 headers {

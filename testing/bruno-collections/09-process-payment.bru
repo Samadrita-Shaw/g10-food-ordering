@@ -5,8 +5,9 @@ meta {
 }
 
 post {
-  url: {{paymentServiceUrl}}/api/payments
+  url: http://localhost:8084/api/payments
   body: json
+  auth: none
 }
 
 headers {

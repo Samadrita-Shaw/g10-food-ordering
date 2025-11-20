@@ -5,7 +5,9 @@ meta {
 }
 
 get {
-  url: {{catalogServiceUrl}}/api/restaurants/{{restaurantId}}/menu
+  url: http://localhost:8082/api/restaurants/{{restaurantId}}/menu
+  body: none
+  auth: none
 }
 
 headers {
