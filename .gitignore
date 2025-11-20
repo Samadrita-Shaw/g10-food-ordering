@@ -255,3 +255,11 @@ error.log
 # JMX
 jmxremote.password
 jmxremote.access
+
+# Service-specific target directories (explicit)
+user-service-springboot/target/
+gateway-springboot/target/
+catalog-service-springboot/target/
+order-service-springboot/target/
+payment-service-springboot/target/
+delivery-service-springboot/target/

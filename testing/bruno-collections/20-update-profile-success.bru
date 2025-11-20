@@ -1,0 +1,69 @@
+meta {
+  name: Update User Profile
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{userServiceUrl}}/api/users/profile
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": "{{userId}}",
+    "email": "updated@example.com",
+    "name": "Updated Test User",
+    "phone": "+9876543210",
+    "role": "CUSTOMER",
+    "addresses": [
+      {
+        "street": "456 Updated Street",
+        "city": "Updated City",
+        "state": "Updated State",
+        "zipCode": "12345",
+        "country": "USA",
+        "isDefault": true
+      }
+    ],
+    "preferences": {
+      "cuisinePreferences": ["Italian", "Mexican"],
+      "dietaryRestrictions": ["Vegetarian"],
+      "preferredDeliveryTime": "18:00",
+      "emailNotifications": true,
+      "smsNotifications": true,
+      "pushNotifications": true,
+      "language": "en",
+      "currency": "USD"
+    }
+  }
+}
+
+tests {
+  test("Profile update successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('name');
+    expect(res.body.name).to.equal('Updated Test User');
+  });
+
+  test("Updated profile contains new data", function() {
+    expect(res.body.email).to.equal('updated@example.com');
+    expect(res.body.phone).to.equal('+9876543210');
+    expect(res.body.addresses).to.be.an('array');
+    expect(res.body.preferences).to.have.property('cuisinePreferences');
+  });
+
+  test("Response has proper structure", function() {
+    expect(res.body).to.have.property('createdAt');
+    expect(res.body).to.have.property('updatedAt');
+    expect(res.body).to.have.property('active');
+    expect(res.body.active).to.be.true;
+  });
+}

@@ -1,0 +1,67 @@
+meta {
+  name: Update Profile - Complete Workflow Test
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{userServiceUrl}}/api/users/profile
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": "{{userId}}",
+    "email": "{{testUserEmail}}",
+    "name": "Complete Update Test User",
+    "phone": "+5555555555",
+    "role": "CUSTOMER",
+    "addresses": [
+      {
+        "street": "789 Complete Test Street",
+        "city": "Test City",
+        "state": "Test State",
+        "zipCode": "54321",
+        "country": "USA",
+        "isDefault": true
+      }
+    ],
+    "preferences": {
+      "cuisinePreferences": ["Chinese", "Indian", "Thai"],
+      "dietaryRestrictions": ["Gluten-Free"],
+      "preferredDeliveryTime": "19:30",
+      "emailNotifications": false,
+      "smsNotifications": true,
+      "pushNotifications": false,
+      "language": "es",
+      "currency": "EUR"
+    }
+  }
+}
+
+tests {
+  test("Complete profile update successful", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('name');
+    expect(res.body.name).to.equal('Complete Update Test User');
+  });
+
+  test("All nested objects updated correctly", function() {
+    expect(res.body.addresses).to.be.an('array');
+    expect(res.body.addresses[0].street).to.equal('789 Complete Test Street');
+    expect(res.body.preferences.language).to.equal('es');
+    expect(res.body.preferences.currency).to.equal('EUR');
+  });
+
+  test("Boolean preferences updated correctly", function() {
+    expect(res.body.preferences.emailNotifications).to.be.false;
+    expect(res.body.preferences.smsNotifications).to.be.true;
+    expect(res.body.preferences.pushNotifications).to.be.false;
+  });
+}

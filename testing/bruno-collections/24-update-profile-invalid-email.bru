@@ -1,0 +1,33 @@
+meta {
+  name: Update Profile - Invalid Email Format
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{userServiceUrl}}/api/users/profile
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "id": "{{userId}}",
+    "email": "invalid-email-format",
+    "name": "Test User",
+    "phone": "+1234567890",
+    "role": "CUSTOMER"
+  }
+}
+
+tests {
+  test("Profile update fails with invalid email", function() {
+    expect([400, 422]).to.include(res.status);
+    expect(res.body).to.have.property('error');
+  });
+}
