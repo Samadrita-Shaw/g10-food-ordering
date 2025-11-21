@@ -17,7 +17,12 @@ spring:
     port: 5672
     username: guest
     password: guest
-      
+
+# JWT Configuration (same as User Service for token compatibility)
+jwt:
+  secret: mySecretKey1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  expiration: 86400000
+
 logging:
   level:
     org.springframework.data.jpa: DEBUG
