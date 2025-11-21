@@ -1,0 +1,19 @@
+meta {
+  name: Get Payment Methods
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/payments/methods
+  body: none
+  auth: none
+}
+
+tests {
+  test("Payment methods retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('paymentMethods');
+    expect(res.body.paymentMethods).to.be.an('array');
+  });
+}

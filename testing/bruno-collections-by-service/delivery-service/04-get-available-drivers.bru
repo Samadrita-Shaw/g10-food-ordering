@@ -1,0 +1,23 @@
+meta {
+  name: Get Available Drivers
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/delivery/drivers/available
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+tests {
+  test("Available drivers retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('availableDrivers');
+    expect(res.body.availableDrivers).to.be.an('array');
+  });
+}

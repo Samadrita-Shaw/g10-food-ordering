@@ -1,0 +1,48 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/orders
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "user123",
+    "restaurantId": "rest123",
+    "items": [
+      {
+        "menuItemId": "item1",
+        "name": "Margherita Pizza",
+        "price": 12.99,
+        "quantity": 2
+      }
+    ],
+    "totalAmount": 25.98,
+    "deliveryAddress": {
+      "street": "456 Oak St",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001"
+    },
+    "status": "PENDING"
+  }
+}
+
+tests {
+  test("Order created successfully", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body).to.have.property('id');
+    expect(res.body.totalAmount).to.equal(25.98);
+    
+    bru.setEnvVar("orderId", res.body.id);
+  });
+}

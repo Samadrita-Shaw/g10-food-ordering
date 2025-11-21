@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "name": "Order Service API",
+  "type": "collection",
+  "environments": {
+    "local": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:8083",
+        "authToken": "",
+        "orderId": "",
+        "userId": "",
+        "restaurantId": ""
+      }
+    },
+    "kubernetes": {
+      "name": "Kubernetes",
+      "variables": {
+        "baseUrl": "http://localhost:8083",
+        "authToken": "",
+        "orderId": "",
+        "userId": "",
+        "restaurantId": ""
+      }
+    }
+  }
+}

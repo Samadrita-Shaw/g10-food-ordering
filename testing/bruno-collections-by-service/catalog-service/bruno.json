@@ -1,0 +1,23 @@
+{
+  "version": "1",
+  "name": "Catalog Service API",
+  "type": "collection",
+  "environments": {
+    "local": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:8082",
+        "authToken": "",
+        "restaurantId": ""
+      }
+    },
+    "kubernetes": {
+      "name": "Kubernetes",
+      "variables": {
+        "baseUrl": "http://localhost:8082",
+        "authToken": "",
+        "restaurantId": ""
+      }
+    }
+  }
+}

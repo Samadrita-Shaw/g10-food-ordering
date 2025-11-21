@@ -1,0 +1,23 @@
+meta {
+  name: Deactivate User Account
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/api/users/profile
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+tests {
+  test("Account deactivated successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('message');
+    expect(res.body.message).to.equal('Account deactivated successfully');
+  });
+}

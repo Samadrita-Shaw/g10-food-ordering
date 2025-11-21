@@ -1,0 +1,21 @@
+{
+  "version": "1",
+  "name": "User Service API",
+  "type": "collection",
+  "environments": {
+    "local": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:8081",
+        "authToken": ""
+      }
+    },
+    "kubernetes": {
+      "name": "Kubernetes",
+      "variables": {
+        "baseUrl": "http://localhost:8081",
+        "authToken": ""
+      }
+    }
+  }
+}

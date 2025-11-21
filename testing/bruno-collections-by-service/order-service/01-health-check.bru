@@ -1,0 +1,20 @@
+meta {
+  name: Health Check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/orders/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Service is healthy", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('UP');
+    expect(res.body.service).to.equal('order-service');
+  });
+}

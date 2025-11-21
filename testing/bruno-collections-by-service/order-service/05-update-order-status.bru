@@ -1,0 +1,29 @@
+meta {
+  name: Update Order Status
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/api/orders/{{orderId}}/status
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "CONFIRMED"
+  }
+}
+
+tests {
+  test("Order status updated successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('id');
+    expect(res.body).to.have.property('status');
+  });
+}

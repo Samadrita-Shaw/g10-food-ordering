@@ -1,0 +1,32 @@
+meta {
+  name: Process Refund
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/payments/refund/{{transactionId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "amount": 25.99,
+    "reason": "Order cancelled by customer"
+  }
+}
+
+tests {
+  test("Refund processed successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('success');
+    expect(res.body.success).to.equal(true);
+    expect(res.body).to.have.property('refundId');
+  });
+}

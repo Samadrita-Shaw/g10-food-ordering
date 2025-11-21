@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "name": "Delivery Service API",
+  "type": "collection",
+  "environments": {
+    "local": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:8085",
+        "authToken": "",
+        "deliveryId": "",
+        "orderId": "",
+        "driverId": ""
+      }
+    },
+    "kubernetes": {
+      "name": "Kubernetes",
+      "variables": {
+        "baseUrl": "http://localhost:8085",
+        "authToken": "",
+        "deliveryId": "",
+        "orderId": "",
+        "driverId": ""
+      }
+    }
+  }
+}
