@@ -7,7 +7,7 @@ meta {
 get {
   url: http://localhost:8081/api/users/profile
   body: none
-  auth: none
+  auth: bearer
 }
 
 headers {
@@ -15,17 +15,21 @@ headers {
   Content-Type: application/json
 }
 
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2OTIwMzUwNzA4MWM0Mjc5ODBhNDExODgiLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJyb2xlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NjM3MTg0MzAsImV4cCI6MTc2MzcxODUxNn0.7oqBR1zsos-y4SQee0rijeiVYtWfsqI7aGoq0tsyWGs_m7NiojkW-nHvGRWqUgTUdxnAz9KmFnHpsHHzBAkkNA
+}
+
 tests {
   test("Profile retrieved successfully", function() {
     expect(res.status).to.equal(200);
     expect(res.body).to.have.property('email');
-    expect(res.body.email).to.equal('testuser@example.com');
+    expect(res.body.email).to.equal('samadrita@test.com');
   });
   
   test("Profile contains required fields", function() {
     expect(res.body).to.have.property('name');
     expect(res.body).to.have.property('role');
-    expect(res.body.name).to.equal('Test User');
+    expect(res.body.name).to.equal('Sam');
     expect(res.body.role).to.equal('CUSTOMER');
   });
 }

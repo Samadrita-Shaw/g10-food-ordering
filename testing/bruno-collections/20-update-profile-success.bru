@@ -7,12 +7,16 @@ meta {
 put {
   url: {{userServiceUrl}}/api/users/profile
   body: json
-  auth: none
+  auth: bearer
 }
 
 headers {
   Authorization: Bearer {{authToken}}
   Content-Type: application/json
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2OTIwMDdjN2VlZmIyYzVkZThmNzlhZTAiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NjM3MDY5MDYsImV4cCI6MTc2MzcwNjk5Mn0.9XtbYWuzHQQA_hl24RXkcJIATK3-AOEwnEmw5WDfb75v0nFbhDyd75tSd9gGRLERgO2e8DfkS0_92IOc-kLCXA
 }
 
 body:json {
@@ -52,14 +56,14 @@ tests {
     expect(res.body).to.have.property('name');
     expect(res.body.name).to.equal('Updated Test User');
   });
-
+  
   test("Updated profile contains new data", function() {
     expect(res.body.email).to.equal('updated@example.com');
     expect(res.body.phone).to.equal('+9876543210');
     expect(res.body.addresses).to.be.an('array');
     expect(res.body.preferences).to.have.property('cuisinePreferences');
   });
-
+  
   test("Response has proper structure", function() {
     expect(res.body).to.have.property('createdAt');
     expect(res.body).to.have.property('updatedAt');
