@@ -2,16 +2,20 @@
   "version": "1",
   "name": "User Service API",
   "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
   "environments": {
-    "local": {
+    "Local Development": {
       "name": "Local Development",
       "variables": {
         "baseUrl": "http://localhost:8081",
         "authToken": ""
       }
     },
-    "kubernetes": {
-      "name": "Kubernetes",
+    "Kubernetes": {
+      "name": "Kubernetes", 
       "variables": {
         "baseUrl": "http://localhost:8081",
         "authToken": ""

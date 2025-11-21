@@ -2,8 +2,12 @@
   "version": "1",
   "name": "Payment Service API",
   "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
   "environments": {
-    "local": {
+    "Local Development": {
       "name": "Local Development",
       "variables": {
         "baseUrl": "http://localhost:8084",
@@ -12,7 +16,7 @@
         "orderId": ""
       }
     },
-    "kubernetes": {
+    "Kubernetes": {
       "name": "Kubernetes",
       "variables": {
         "baseUrl": "http://localhost:8084",

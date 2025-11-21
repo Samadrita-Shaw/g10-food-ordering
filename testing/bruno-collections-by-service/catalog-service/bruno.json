@@ -2,8 +2,12 @@
   "version": "1",
   "name": "Catalog Service API",
   "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
   "environments": {
-    "local": {
+    "Local Development": {
       "name": "Local Development",
       "variables": {
         "baseUrl": "http://localhost:8082",
@@ -11,7 +15,7 @@
         "restaurantId": ""
       }
     },
-    "kubernetes": {
+    "Kubernetes": {
       "name": "Kubernetes",
       "variables": {
         "baseUrl": "http://localhost:8082",
