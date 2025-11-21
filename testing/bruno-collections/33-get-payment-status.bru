@@ -1,0 +1,30 @@
+meta {
+  name: 33. Get Payment Status
+  type: http
+  seq: 33
+}
+
+get {
+  url: http://localhost:8084/api/payments/status/{{transactionId}}
+  body: none
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Payment status retrieved", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('transactionId');
+    expect(res.body).to.have.property('status');
+  });
+  
+  test("Status information complete", function() {
+    expect(res.body).to.have.property('amount');
+    expect(res.body).to.have.property('paymentMethod');
+    expect(res.body).to.have.property('timestamp');
+  });
+}

@@ -1,0 +1,55 @@
+meta {
+  name: 35. Assign Delivery
+  type: http
+  seq: 35
+}
+
+post {
+  url: http://localhost:8085/api/delivery/assign
+  body: json
+  auth: bearer
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "orderId": "ORD_123456789",
+    "driverId": "DRV_987654321",
+    "restaurantAddress": {
+      "street": "123 Main St",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10001"
+    },
+    "deliveryAddress": {
+      "street": "456 Customer Ave",
+      "city": "New York", 
+      "state": "NY",
+      "zipCode": "10002"
+    }
+  }
+}
+
+tests {
+  test("Delivery assigned successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('success');
+    expect(res.body.success).to.equal(true);
+  });
+  
+  test("Assignment details provided", function() {
+    expect(res.body).to.have.property('deliveryId');
+    expect(res.body).to.have.property('orderId');
+    expect(res.body).to.have.property('driverId');
+    expect(res.body).to.have.property('status');
+    expect(res.body.status).to.equal('ASSIGNED');
+  });
+  
+  test("Estimated delivery time provided", function() {
+    expect(res.body).to.have.property('estimatedDeliveryTime');
+  });
+}

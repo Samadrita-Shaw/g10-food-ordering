@@ -1,0 +1,49 @@
+meta {
+  name: 28. Update Restaurant
+  type: http
+  seq: 28
+}
+
+put {
+  url: http://localhost:8082/api/restaurants/{{restaurantId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Updated Pizza Palace",
+    "cuisineType": "Italian-American",
+    "address": {
+      "street": "456 Updated Ave",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10002",
+      "country": "USA"
+    },
+    "phone": "+1234567891",
+    "email": "updated@pizzapalace.com",
+    "isActive": true,
+    "rating": 4.7,
+    "deliveryTime": 25,
+    "minimumOrder": 15.99
+  }
+}
+
+tests {
+  test("Restaurant updated successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.have.property('name');
+    expect(res.body.name).to.equal('Updated Pizza Palace');
+    expect(res.body.rating).to.equal(4.7);
+  });
+  
+  test("Updated data persisted", function() {
+    expect(res.body.cuisineType).to.equal('Italian-American');
+    expect(res.body.minimumOrder).to.equal(15.99);
+  });
+}
