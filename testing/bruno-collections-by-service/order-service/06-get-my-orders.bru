@@ -1,0 +1,22 @@
+meta {
+  name: Get My Orders
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/orders/my-orders
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{authToken}}
+}
+
+tests {
+  test("My orders retrieved successfully", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body).to.be.an('array');
+  });
+}
