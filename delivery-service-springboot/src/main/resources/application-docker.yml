@@ -9,10 +9,20 @@ spring:
       password: password
       authentication-database: admin
   rabbitmq:
-    host: rabbitmq
+    host: food-ordering-rabbitmq
     port: 5672
     username: guest
     password: guest
+
+# Management endpoints for monitoring and health checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
       
 logging:
   level:

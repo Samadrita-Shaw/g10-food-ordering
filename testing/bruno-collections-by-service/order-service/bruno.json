@@ -5,27 +5,5 @@
   "ignore": [
     "node_modules",
     ".git"
-  ],
-  "environments": {
-    "Local Development": {
-      "name": "Local Development",
-      "variables": {
-        "baseUrl": "http://localhost:8083",
-        "authToken": "",
-        "orderId": "",
-        "userId": "",
-        "restaurantId": ""
-      }
-    },
-    "Kubernetes": {
-      "name": "Kubernetes",
-      "variables": {
-        "baseUrl": "http://localhost:8083",
-        "authToken": "",
-        "orderId": "",
-        "userId": "",
-        "restaurantId": ""
-      }
-    }
-  }
+  ]
 }

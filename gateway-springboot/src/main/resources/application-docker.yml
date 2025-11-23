@@ -2,9 +2,189 @@
 spring:
   data:
     redis:
-      host: redis
+      host: food-ordering-redis
       port: 6379
+  
+  # Disable security completely
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
+  
+  # Gateway configuration for Docker environment
+  cloud:
+    gateway:
+      routes:
+        # Login route - maps /login to user service login endpoint
+        - id: user-login
+          uri: http://user-service:8080
+          predicates:
+            - Path=/login
+          filters:
+            - RewritePath=/login, /api/users/login
+            - name: CircuitBreaker
+              args:
+                name: user-service
+                fallbackUri: forward:/fallback/user-service
+        
+        # Register route - maps /register to user service register endpoint
+        - id: user-register
+          uri: http://user-service:8080
+          predicates:
+            - Path=/register
+          filters:
+            - RewritePath=/register, /api/users/register
+            - name: CircuitBreaker
+              args:
+                name: user-service
+                fallbackUri: forward:/fallback/user-service
+        
+        - id: user-service
+          uri: http://user-service:8080
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: user-service
+                fallbackUri: forward:/fallback/user-service
+        
+        - id: catalog-service
+          uri: http://catalog-service:8080
+          predicates:
+            - Path=/api/restaurants/**,/api/catalog/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: catalog-service
+                fallbackUri: forward:/fallback/catalog-service
+        
+        - id: order-service
+          uri: http://order-service:8080
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: order-service
+                fallbackUri: forward:/fallback/order-service
+        
+        # Order service health check route
+        - id: order-service-health
+          uri: http://order-service:8080
+          predicates:
+            - Path=/api/orders/health
+          filters:
+            - RewritePath=/api/orders/health, /actuator/health
+        
+        - id: payment-service
+          uri: http://payment-service:8080
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service
+                fallbackUri: forward:/fallback/payment-service
+        
+        - id: delivery-service
+          uri: http://delivery-service:8080
+          predicates:
+            - Path=/api/delivery/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: delivery-service
+                fallbackUri: forward:/fallback/delivery-service
+        
+        # Delivery service health check route - maps to custom health endpoint
+        - id: delivery-service-health
+          uri: http://delivery-service:8080
+          predicates:
+            - Path=/api/deliveries/health
+          filters:
+            - RewritePath=/api/deliveries/health, /api/delivery/health
       
+      # Add discovery configuration to help with service resolution
+      discovery:
+        locator:
+          enabled: false
+      
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+# Resilience4J Circuit Breaker Configuration - Relaxed settings for debugging
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 80  # Increased from 50 to be more tolerant
+        waitDurationInOpenState: 10s  # Reduced from 30s for faster recovery
+        slowCallRateThreshold: 80  # Increased from 50
+        slowCallDurationThreshold: 5s  # Increased from 2s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      user-service:
+        baseConfig: default
+      catalog-service:
+        baseConfig: default
+      order-service:
+        baseConfig: default
+      payment-service:
+        baseConfig: default
+      delivery-service:
+        baseConfig: default
+  
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 30s  # Increased from 10s
+    instances:
+      user-service:
+        baseConfig: default
+      catalog-service:
+        baseConfig: default
+      order-service:
+        baseConfig: default
+      payment-service:
+        baseConfig: default
+      delivery-service:
+        baseConfig: default
+
+# Service URL configuration for Docker environment
+app:
+  services:
+    user-service:
+      url: http://food-ordering-user-service-springboot:8080
+    catalog-service:
+      url: http://food-ordering-catalog-service-springboot:8080
+    order-service:
+      url: http://food-ordering-order-service-springboot:8080
+    payment-service:
+      url: http://food-ordering-payment-service-springboot:8080
+    delivery-service:
+      url: http://food-ordering-delivery-service-springboot:8080
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    io.github.resilience4j: DEBUG

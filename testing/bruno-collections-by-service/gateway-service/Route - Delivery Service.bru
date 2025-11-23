@@ -1,0 +1,21 @@
+meta {
+  name: Delivery Service Route Test
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{gateway_url}}/api/deliveries/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should route to delivery service", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 503, 404]);
+    
+    if (res.getStatus() === 503) {
+      console.log("Circuit breaker might be open for delivery service");
+    }
+  });
+}

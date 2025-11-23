@@ -1,0 +1,18 @@
+meta {
+  name: Gateway Health Check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{gateway_url}}/actuator/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should be healthy", function() {
+    expect(res.getStatus()).to.equal(200);
+    expect(res.getBody()).to.have.property('status');
+  });
+}

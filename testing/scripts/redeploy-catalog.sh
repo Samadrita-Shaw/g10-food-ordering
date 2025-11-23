@@ -8,6 +8,7 @@ docker rm food-ordering-catalog-service-springboot 2>/dev/null || true
 docker run -d \
   --name food-ordering-catalog-service-springboot \
   --network dev-infra_food-ordering-network \
+  --hostname catalog-service \
   -p 8082:8080 \
   -e SPRING_PROFILES_ACTIVE=docker \
   food-ordering/catalog-service:latest

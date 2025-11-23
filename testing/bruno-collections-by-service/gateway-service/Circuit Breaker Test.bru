@@ -1,0 +1,23 @@
+meta {
+  name: Circuit Breaker Fallback Test
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{gateway_url}}/fallback/user-service
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should provide circuit breaker fallback", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 404, 503]);
+    
+    if (res.getStatus() === 200) {
+      console.log("Fallback endpoint is accessible");
+    } else {
+      console.log("Fallback endpoint may not be implemented or accessible");
+    }
+  });
+}

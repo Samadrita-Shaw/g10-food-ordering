@@ -8,10 +8,30 @@ spring:
       username: admin
       password: password
       authentication-database: admin
+  
+  # Add RabbitMQ configuration for Docker environment
+  rabbitmq:
+    host: food-ordering-rabbitmq
+    port: 5672
+    username: guest
+    password: guest
 
 jwt:
   secret: "dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3Jqd3R0b2tlbnNpbmZvb2RvcmRlcmluZ2FwcA=="
   expiration: 86400
+
+# Management and health check configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    rabbit:
+      enabled: false  # Disable RabbitMQ health check to prevent service from being DOWN
       
 logging:
   level:

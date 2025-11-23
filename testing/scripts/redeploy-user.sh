@@ -8,6 +8,7 @@ docker rm food-ordering-user-service-springboot 2>/dev/null || true
 docker run -d \
   --name food-ordering-user-service-springboot \
   --network dev-infra_food-ordering-network \
+  --hostname user-service \
   -p 8081:8080 \
   -e SPRING_PROFILES_ACTIVE=docker \
   food-ordering/user-service:latest

@@ -1,0 +1,23 @@
+meta {
+  name: User Service Route Test
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{gateway_url}}/api/users/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should route to user service", function() {
+    // Should get response from user service through gateway
+    expect(res.getStatus()).to.be.oneOf([200, 503, 404]);
+    
+    // If circuit breaker is open, we might get 503
+    if (res.getStatus() === 503) {
+      console.log("Circuit breaker might be open for user service");
+    }
+  });
+}

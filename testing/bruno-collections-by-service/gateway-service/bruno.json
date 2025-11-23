@@ -1,0 +1,67 @@
+{
+  "version": "1",
+  "name": "Gateway Service API Tests",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "environments": {
+    "Local Development": {
+      "name": "Local Development",
+      "variables": {
+        "baseUrl": "http://localhost:8080",
+        "authToken": "",
+        "userId": "",
+        "orderId": "",
+        "restaurantId": "",
+        "testEmail": "test@example.com",
+        "testPassword": "password123",
+        "graphqlEndpoint": "http://localhost:8080/graphql",
+        "restEndpoint": "http://localhost:8080/api"
+      }
+    },
+    "Docker Compose": {
+      "name": "Docker Compose",
+      "variables": {
+        "baseUrl": "http://localhost:8080",
+        "authToken": "",
+        "userId": "",
+        "orderId": "",
+        "restaurantId": "",
+        "testEmail": "test@example.com",
+        "testPassword": "password123",
+        "graphqlEndpoint": "http://localhost:8080/graphql",
+        "restEndpoint": "http://localhost:8080/api"
+      }
+    },
+    "Kubernetes": {
+      "name": "Kubernetes",
+      "variables": {
+        "baseUrl": "http://localhost:80",
+        "authToken": "",
+        "userId": "",
+        "orderId": "",
+        "restaurantId": "",
+        "testEmail": "test@example.com",
+        "testPassword": "password123",
+        "graphqlEndpoint": "http://localhost:80/graphql",
+        "restEndpoint": "http://localhost:80/api"
+      }
+    },
+    "Minikube": {
+      "name": "Minikube",
+      "variables": {
+        "baseUrl": "http://gateway-service.food-ordering.svc.cluster.local:80",
+        "authToken": "",
+        "userId": "",
+        "orderId": "",
+        "restaurantId": "",
+        "testEmail": "test@example.com",
+        "testPassword": "password123",
+        "graphqlEndpoint": "http://gateway-service.food-ordering.svc.cluster.local:80/graphql",
+        "restEndpoint": "http://gateway-service.food-ordering.svc.cluster.local:80/api"
+      }
+    }
+  }
+}

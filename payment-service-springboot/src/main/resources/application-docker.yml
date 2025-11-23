@@ -12,6 +12,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+  # Add RabbitMQ configuration for Docker environment
+  rabbitmq:
+    host: food-ordering-rabbitmq
+    port: 5672
+    username: guest
+    password: guest
       
 logging:
   level:

@@ -1,0 +1,27 @@
+meta {
+  name: CORS Preflight Test
+  type: http
+  seq: 8
+}
+
+options {
+  url: {{gateway_url}}/api/users
+  body: none
+  auth: none
+}
+
+headers {
+  Origin: http://localhost:3000
+  Access-Control-Request-Method: GET
+  Access-Control-Request-Headers: Content-Type
+}
+
+tests {
+  test("Gateway should handle CORS preflight requests", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 204]);
+    
+    // Check CORS headers
+    const corsHeaders = res.getHeaders();
+    expect(corsHeaders).to.have.property('access-control-allow-origin');
+  });
+}

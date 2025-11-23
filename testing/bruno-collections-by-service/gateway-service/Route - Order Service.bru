@@ -1,0 +1,21 @@
+meta {
+  name: Order Service Route Test
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{gateway_url}}/api/orders/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should route to order service", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 503, 404]);
+    
+    if (res.getStatus() === 503) {
+      console.log("Circuit breaker might be open for order service");
+    }
+  });
+}

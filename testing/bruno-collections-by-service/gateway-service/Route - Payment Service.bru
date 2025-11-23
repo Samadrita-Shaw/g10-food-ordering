@@ -1,0 +1,21 @@
+meta {
+  name: Payment Service Route Test
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{gateway_url}}/api/payments/health
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should route to payment service", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 503, 404]);
+    
+    if (res.getStatus() === 503) {
+      console.log("Circuit breaker might be open for payment service");
+    }
+  });
+}

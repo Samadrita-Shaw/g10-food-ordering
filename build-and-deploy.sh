@@ -52,37 +52,37 @@ build_images() {
     
     # Gateway Service
     echo "Building Gateway Service..."
-    cd gateway
+    cd gateway-springboot
     docker build -t food-ordering/gateway:latest .
     cd ..
     
     # User Service
     echo "Building User Service..."
-    cd user-service
+    cd user-service-springboot
     docker build -t food-ordering/user-service:latest .
     cd ..
     
     # Catalog Service
     echo "Building Catalog Service..."
-    cd catalog-service
+    cd catalog-service-springboot
     docker build -t food-ordering/catalog-service:latest .
     cd ..
     
     # Order Service
     echo "Building Order Service..."
-    cd order-service
+    cd order-service-springboot
     docker build -t food-ordering/order-service:latest .
     cd ..
     
     # Payment Service
     echo "Building Payment Service..."
-    cd payment-service
+    cd payment-service-springboot
     docker build -t food-ordering/payment-service:latest .
     cd ..
     
     # Delivery Service
     echo "Building Delivery Service..."
-    cd delivery-service
+    cd delivery-service-springboot
     docker build -t food-ordering/delivery-service:latest .
     cd ..
     

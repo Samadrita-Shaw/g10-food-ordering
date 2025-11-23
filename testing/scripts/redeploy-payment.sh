@@ -8,6 +8,7 @@ docker rm food-ordering-payment-service-springboot 2>/dev/null || true
 docker run -d \
   --name food-ordering-payment-service-springboot \
   --network dev-infra_food-ordering-network \
+  --hostname payment-service \
   -p 8084:8080 \
   -e SPRING_PROFILES_ACTIVE=docker \
   food-ordering/payment-service:latest

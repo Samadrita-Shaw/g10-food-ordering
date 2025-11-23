@@ -1,0 +1,23 @@
+meta {
+  name: Invalid Route Test
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{gateway_url}}/api/invalid-service/test
+  body: none
+  auth: none
+}
+
+tests {
+  test("Gateway should handle invalid routes properly", function() {
+    expect(res.getStatus()).to.be.oneOf([404, 503]);
+    
+    if (res.getStatus() === 404) {
+      console.log("Gateway correctly returns 404 for invalid routes");
+    } else if (res.getStatus() === 503) {
+      console.log("Gateway returns 503 - service unavailable for invalid routes");
+    }
+  });
+}
