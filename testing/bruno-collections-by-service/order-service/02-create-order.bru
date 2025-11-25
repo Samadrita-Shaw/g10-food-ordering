@@ -7,7 +7,11 @@ meta {
 post {
   url: {{baseUrl}}/api/orders
   body: json
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
 }
 
 headers {
@@ -32,8 +36,7 @@ body:json {
       "city": "New York",
       "state": "NY",
       "zipCode": "10001"
-    },
-    "status": "PENDING"
+    }
   }
 }
 

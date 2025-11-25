@@ -18,7 +18,7 @@ spring:
 
 jwt:
   secret: "dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3Jqd3R0b2tlbnNpbmZvb2RvcmRlcmluZ2FwcA=="
-  expiration: 86400
+  expiration: 86400000
 
 # Management and health check configuration
 management:

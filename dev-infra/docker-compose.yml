@@ -27,20 +27,6 @@ services:
     networks:
       - food-ordering-network
 
-  rabbitmq:
-    image: rabbitmq:3.9-management
-    container_name: food-ordering-rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: password
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - food-ordering-network
-
   redis:
     image: redis:6.2-alpine
     container_name: food-ordering-redis
@@ -49,7 +35,7 @@ services:
     networks:
       - food-ordering-network
 
-    # Spring Boot Microservices
+  # Spring Boot Microservices
   gateway:
     build:
       context: ../gateway-springboot
@@ -101,7 +87,6 @@ services:
       - "8083:8080"
     depends_on:
       - postgres
-      - rabbitmq
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
@@ -131,7 +116,6 @@ services:
       - "8085:8080"
     depends_on:
       - mongodb
-      - rabbitmq
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
@@ -140,7 +124,6 @@ services:
 volumes:
   mongodb_data:
   postgres_data:
-  rabbitmq_data:
 
 networks:
   food-ordering-network:

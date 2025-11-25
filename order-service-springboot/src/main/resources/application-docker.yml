@@ -12,15 +12,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  rabbitmq:
-    host: food-ordering-rabbitmq
-    port: 5672
-    username: guest
-    password: guest
 
-# JWT Configuration (same as User Service for token compatibility)
+# JWT Configuration (must match User Service for token compatibility)
 jwt:
-  secret: mySecretKey1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  secret: "dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3Jqd3R0b2tlbnNpbmZvb2RvcmRlcmluZ2FwcA=="
   expiration: 86400000
 
 # Management endpoints for monitoring and health checks

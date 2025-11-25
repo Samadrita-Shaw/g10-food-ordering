@@ -17,16 +17,16 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/orders/health").permitAll()
-                .requestMatchers("/login").denyAll() // Explicitly deny login requests
-                .requestMatchers("/api/orders/**").permitAll() // Allow all order endpoints for now
-                .anyRequest().authenticated()
+                .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .anyRequest().permitAll() // Temporarily allow all to test configuration
             );
 
         return http.build();

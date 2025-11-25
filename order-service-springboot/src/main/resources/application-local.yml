@@ -18,9 +18,9 @@ spring:
     username: admin
     password: password
 
-# JWT Configuration (same as User Service for token compatibility)
+# JWT Configuration (synchronized with User Service)
 jwt:
-  secret: mySecretKey1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+  secret: dGhpc2lzYXZlcnlzZWN1cmVzZWNyZXRrZXlmb3Jqd3R0b2tlbnNpbmZvb2RvcmRlcmluZ2FwcA==
   expiration: 86400000
 
 logging:

@@ -16,6 +16,7 @@ import io.jsonwebtoken.security.Keys;
 /**
  * JWT utility class for token generation and validation
  */
+// Keep @Component for now to ensure proper injection of @Value properties
 @Component
 public class JwtUtil {
     
@@ -33,7 +34,7 @@ public class JwtUtil {
      * Get user ID from JWT token
      */
     public String getUserIdFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
+        Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
@@ -46,7 +47,7 @@ public class JwtUtil {
      * Get email from JWT token
      */
     public String getEmailFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
+        Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
@@ -59,7 +60,7 @@ public class JwtUtil {
      * Get role from JWT token
      */
     public String getRoleFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
+        Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
@@ -73,10 +74,11 @@ public class JwtUtil {
      */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
+            Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
+            System.out.println("JWT token validation successful");
             return true;
         } catch (MalformedJwtException e) {
             System.err.println("Invalid JWT token: " + e.getMessage());
@@ -86,6 +88,10 @@ public class JwtUtil {
             System.err.println("JWT token is unsupported: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("JWT claims string is empty: " + e.getMessage());
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            System.err.println("JWT signature validation failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("JWT token validation error: " + e.getClass().getSimpleName() + " - " + e.getMessage());
         }
         return false;
     }
@@ -94,7 +100,7 @@ public class JwtUtil {
      * Check if JWT token is expired
      */
     public boolean isTokenExpired(String token) {
-        Claims claims = Jwts.parserBuilder()
+        Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)

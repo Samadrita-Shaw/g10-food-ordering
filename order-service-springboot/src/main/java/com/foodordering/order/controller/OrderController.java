@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,26 +38,35 @@ public class OrderController {
     }
 
     /**
-     * Helper method to validate JWT token and extract user information
+     * Helper method to get authenticated user ID from Spring Security context
      */
-    private ResponseEntity<String> validateTokenAndGetUserId(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
+    private String getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return (String) authentication.getPrincipal();
         }
-
-        String token = authHeader.substring(7);
-        if (!jwtUtil.validateToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token");
-        }
-
-        String userId = jwtUtil.getUserIdFromToken(token);
-        return ResponseEntity.ok(userId);
+        return null;
     }
 
     /**
-     * Helper method to check if user has admin privileges
+     * Helper method to check if user has admin privileges using Spring Security
      */
-    private boolean isAdmin(String authHeader) {
+    private boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getAuthorities() != null) {
+            return authentication.getAuthorities().stream()
+                    .anyMatch(authority -> 
+                        "ROLE_ADMIN".equals(authority.getAuthority()) || 
+                        "ROLE_RESTAURANT_OWNER".equals(authority.getAuthority())
+                    );
+        }
+        return false;
+    }
+
+    /**
+     * Fallback method to check admin privileges using JWT token (for backwards compatibility)
+     */
+    private boolean isAdminFallback(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return false;
         }
@@ -71,20 +82,24 @@ public class OrderController {
 
     // Create a new order - Requires authentication
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestHeader("Authorization") String authHeader, 
-                                       @RequestBody Order order) {
-        ResponseEntity<String> authResult = validateTokenAndGetUserId(authHeader);
-        if (authResult.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(authResult.getStatusCode())
-                    .body(Map.of("error", "Authentication failed", "message", authResult.getBody()));
+    public ResponseEntity<?> createOrder(@RequestBody Order order) {
+        String userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         }
-
-        String userId = authResult.getBody();
         
         // Set the authenticated user as the order owner
         order.setUserId(userId);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
+        
+        // FIXED: Properly establish bidirectional relationship between Order and OrderItems
+        if (order.getItems() != null) {
+            order.getItems().forEach(item -> {
+                item.setOrder(order);  // This ensures order_id is set properly
+            });
+        }
         
         Order savedOrder = orderRepository.save(order);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder);
@@ -92,8 +107,9 @@ public class OrderController {
 
     // Get all orders - Admin only
     @GetMapping
-    public ResponseEntity<?> getAllOrders(@RequestHeader("Authorization") String authHeader) {
-        if (!isAdmin(authHeader)) {
+    public ResponseEntity<?> getAllOrders(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        // Try Spring Security first, fallback to JWT token validation
+        if (!isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "Admin privileges required"));
         }
@@ -104,20 +120,18 @@ public class OrderController {
 
     // Get order by ID - User can only access their own orders, admins can access all
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderById(@RequestHeader("Authorization") String authHeader, 
-                                        @PathVariable String id) {
-        ResponseEntity<String> authResult = validateTokenAndGetUserId(authHeader);
-        if (authResult.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(authResult.getStatusCode())
-                    .body(Map.of("error", "Authentication failed", "message", authResult.getBody()));
+    public ResponseEntity<?> getOrderById(@PathVariable String id, 
+                                        @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         }
-
-        String userId = authResult.getBody();
         
         return orderRepository.findById(id)
                 .map(order -> {
                     // Users can only access their own orders, admins can access all
-                    if (!userId.equals(order.getUserId()) && !isAdmin(authHeader)) {
+                    if (!userId.equals(order.getUserId()) && !isAdmin() && !isAdminFallback(authHeader)) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                                 .body(Map.of("error", "Access denied", "message", "You can only access your own orders"));
                     }
@@ -128,18 +142,16 @@ public class OrderController {
 
     // Get orders by user - Users can only access their own orders, admins can access any user's orders
     @GetMapping("/user/{userId}")
-    public ResponseEntity<?> getOrdersByUser(@RequestHeader("Authorization") String authHeader, 
-                                           @PathVariable String userId) {
-        ResponseEntity<String> authResult = validateTokenAndGetUserId(authHeader);
-        if (authResult.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(authResult.getStatusCode())
-                    .body(Map.of("error", "Authentication failed", "message", authResult.getBody()));
+    public ResponseEntity<?> getOrdersByUser(@PathVariable String userId, 
+                                           @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String authenticatedUserId = getAuthenticatedUserId();
+        if (authenticatedUserId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         }
-
-        String authenticatedUserId = authResult.getBody();
         
         // Users can only access their own orders, admins can access any user's orders
-        if (!authenticatedUserId.equals(userId) && !isAdmin(authHeader)) {
+        if (!authenticatedUserId.equals(userId) && !isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "You can only access your own orders"));
         }
@@ -150,23 +162,22 @@ public class OrderController {
 
     // Get current user's orders - Authenticated users get their own orders
     @GetMapping("/my-orders")
-    public ResponseEntity<?> getMyOrders(@RequestHeader("Authorization") String authHeader) {
-        ResponseEntity<String> authResult = validateTokenAndGetUserId(authHeader);
-        if (authResult.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(authResult.getStatusCode())
-                    .body(Map.of("error", "Authentication failed", "message", authResult.getBody()));
+    public ResponseEntity<?> getMyOrders() {
+        String userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         }
 
-        String userId = authResult.getBody();
         List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return ResponseEntity.ok(orders);
     }
 
     // Get orders by restaurant - Admin or restaurant owner only
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<?> getOrdersByRestaurant(@RequestHeader("Authorization") String authHeader, 
-                                                  @PathVariable String restaurantId) {
-        if (!isAdmin(authHeader)) {
+    public ResponseEntity<?> getOrdersByRestaurant(@PathVariable String restaurantId, 
+                                                  @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (!isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "Admin or restaurant owner privileges required"));
         }
@@ -177,9 +188,9 @@ public class OrderController {
 
     // Get orders by status - Admin only
     @GetMapping("/status/{status}")
-    public ResponseEntity<?> getOrdersByStatus(@RequestHeader("Authorization") String authHeader, 
-                                             @PathVariable Order.OrderStatus status) {
-        if (!isAdmin(authHeader)) {
+    public ResponseEntity<?> getOrdersByStatus(@PathVariable Order.OrderStatus status, 
+                                             @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (!isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "Admin privileges required"));
         }
@@ -190,21 +201,19 @@ public class OrderController {
 
     // Update order status - Admin or order owner only
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateOrderStatus(@RequestHeader("Authorization") String authHeader, 
-                                             @PathVariable String id, 
-                                             @RequestBody Map<String, String> statusUpdate) {
-        ResponseEntity<String> authResult = validateTokenAndGetUserId(authHeader);
-        if (authResult.getStatusCode() != HttpStatus.OK) {
-            return ResponseEntity.status(authResult.getStatusCode())
-                    .body(Map.of("error", "Authentication failed", "message", authResult.getBody()));
+    public ResponseEntity<?> updateOrderStatus(@PathVariable String id, 
+                                             @RequestBody Map<String, String> statusUpdate,
+                                             @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String userId = getAuthenticatedUserId();
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Authentication required"));
         }
-
-        String userId = authResult.getBody();
         
         return orderRepository.findById(id)
                 .map(order -> {
                     // Users can only update their own orders, admins can update any order
-                    if (!userId.equals(order.getUserId()) && !isAdmin(authHeader)) {
+                    if (!userId.equals(order.getUserId()) && !isAdmin() && !isAdminFallback(authHeader)) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                                 .body(Map.of("error", "Access denied", "message", "You can only update your own orders"));
                     }
@@ -219,8 +228,8 @@ public class OrderController {
 
     // Get recent orders (last 24 hours) - Admin only
     @GetMapping("/recent")
-    public ResponseEntity<?> getRecentOrders(@RequestHeader("Authorization") String authHeader) {
-        if (!isAdmin(authHeader)) {
+    public ResponseEntity<?> getRecentOrders(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (!isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "Admin privileges required"));
         }
@@ -242,8 +251,8 @@ public class OrderController {
 
     // Get order statistics - Admin only
     @GetMapping("/stats")
-    public ResponseEntity<?> getOrderStats(@RequestHeader("Authorization") String authHeader) {
-        if (!isAdmin(authHeader)) {
+    public ResponseEntity<?> getOrderStats(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (!isAdmin() && !isAdminFallback(authHeader)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access denied", "message", "Admin privileges required"));
         }
